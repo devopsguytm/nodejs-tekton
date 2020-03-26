@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: nodejs-git
+spec:
+  type: git
+  params:
+    - name: revision
+      value: master
+    - name: url
+      value: https://github.com/vladsancira/nodejs-tekton.git
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: nodejs-image
+spec:
+  type: image
+  params:
+    - name: url
+      value: us.icr.io/cloud-images/nodejs-app:latest
+

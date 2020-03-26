@@ -1,0 +1,32 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: nodejs-pipeline
+spec:
+  resources:
+    - name: nodejs-git
+      type: git
+    - name: nodejs-image
+      type: image
+
+  tasks:
+  - name: build
+    taskRef:
+      name: build-nodejs-app
+    resources:
+      inputs:
+        - name: source
+          resource: nodejs-git
+      outputs:
+        - name: image
+          resource: nodejs-image
+
+  - name: deploy
+    taskRef:
+      name: deploy-nodejs-app
+    runAfter:
+      - build
+    resources:
+      inputs:
+        - name: source
+          resource: nodejs-git        

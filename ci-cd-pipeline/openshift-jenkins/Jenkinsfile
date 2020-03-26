@@ -1,0 +1,202 @@
+pipeline {
+  agent {
+    node {
+      label 'nodejs' 
+    }
+  }
+  options {
+    timeout(time: 20, unit: 'MINUTES') 
+  }
+  stages {
+    stage('verify') {
+        steps {
+            echo '### Verify is DEV_PROJECT exists and pipeline has access to it ###'
+            script {
+                openshift.withCluster() {
+                    echo "Current Pipeline environment:"
+                    sh 'env | sort'
+                    echo "Making sure required CI/CD projects exist:"
+                    try {
+                        openshift.selector("projects",DEV_PROJECT).exists()
+                        echo "DEV_PROJECT ${DEV_PROJECT} exist"
+                    } catch (e) {
+                        error "Missing ${DEV_PROJECT} PROJECT or RBAC policy to work with PROJECT"
+                    }                    
+                } 
+            } 
+        }
+    }
+    stage('cleanup') {
+        steps {
+            script {
+                openshift.withCluster() {
+                    echo '### Delete BLUE / GREEN app and resources due to resurce limitation ###'
+                    openshift.selector( "all", [ app:"${APP_NAME}" ] ).delete() 
+                    openshift.selector( "all", [ build:"${APP_NAME}" ] ).delete() 
+                } 
+            } 
+        }
+    }    
+    stage('checkout') {
+        steps {
+            echo '### Checkingout GitLab DEV_PROJECT ###'
+            git 'https://github.com/vladsancira/nodejs-tekton.git'
+        }
+    }
+    stage('quality gate') {
+        steps {
+            echo '### Test the code using SonarQube ###'    
+        }
+    }   
+    stage('archive') {
+        steps {
+            echo '### Store artefact into an artefact repository , like Nexus/Artifactory ###'    
+        }
+    } 
+    stage('create build') {
+        steps {
+            echo '### Create new BuildConfiguration and BuilderImage ###'
+            script {
+                openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}")
+                    {
+                        if (openshift.selector("bc",APP_NAME).exists()) {
+                            echo "Using existing BuildConfig."
+                                              
+                        } else {
+                            echo "Create new BuildConfig and BuilderImage based on NodeJs v10 image."
+                            def myNewBuild = openshift.newBuild ("openshift/nodejs:10","--name=${APP_NAME}","--binary=true")                           
+                        }
+                    } 
+                } 
+            } 
+        } 
+    } 
+    stage('create image') {
+        steps {
+            echo '### Create new Image from source ( s2i ) with tag : latest ###'
+            script {
+                openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}")
+                    {   
+                        if (openshift.selector("bc",APP_NAME).exists()) {
+                            openshift.selector("bc",APP_NAME).startBuild("--from-dir=./nodejs-basic", "--wait=true" , "--follow=true")  
+                            openshift.tag("${DEV_PROJECT}/${APP_NAME}:latest", "${DEV_PROJECT}/${APP_NAME}:v${BUILD_NUMBER}")    
+                            // in DEV , DC image trigger is enabled. Deploy is performed using Rolling deployment 
+                            // if application already exists , deploy in DEV is preformed at this stage because a new 'latest' tag was made                                           
+                        }  else {
+                            echo "BuildConfig is missing!"                            
+                        }
+                    }                          
+                }    
+            }
+        }
+    }
+    stage('create app') {
+        steps {
+            echo '### Create new OS Enterprise Application based on tag : latest. ###'
+            script {
+                openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}")
+                    {
+                        if (openshift.selector("dc",APP_NAME).exists()) {
+                            echo "Using existing Application."                            
+                        } else {
+                            echo "Creating new DeploymentConfiguration , Route and Service."                           
+                            def myNewApp = openshift.newApp ("-i ${APP_NAME}:latest")  
+                            myNewApp.describe()                                                     
+                        }                            
+                    } 
+                } 
+            } 
+        }
+    }
+    stage('configure app') {
+        steps {
+            echo '### Configure app : label , expose , autoscale and readiness ###'
+            script {
+                openshift.withCluster(){
+                    openshift.withProject("${DEV_PROJECT}"){  
+                        if (openshift.selector("dc",APP_NAME).exists()) {
+                            openshift.selector("dc",APP_NAME).label(["app.kubernetes.io/name":"nodejs"])                            
+                            openshift.set("env dc/${APP_NAME} BUILD_NUMBER=${BUILD_NUMBER}")
+                        }    
+                        if (!openshift.selector("route",APP_NAME).exists()) {
+                            openshift.selector("svc",APP_NAME).expose()
+                        }                         
+                    }
+                }        
+            }
+        }
+    }    
+    stage('watch') {
+        steps{
+            echo "### Watch deployment until pod is in 'Running' state ###"
+            script{
+                openshift.withCluster(){
+                    openshift.withProject("${DEV_PROJECT}"){
+                        openshift.selector("dc", APP_NAME).related('pods').untilEach(1) {
+                            return(it.object().status.phase == "Running")
+                        }
+                    }
+                }
+            }
+        }  
+    }
+    stage('test') {
+        steps {
+            echo "### Testing if 'Service' resource is operational and responding ###"
+            script {
+                openshift.withCluster() {
+                    openshift.withProject("${DEV_PROJECT}") {
+                        echo sh (script: "curl -I ${APP_NAME}.${DEV_PROJECT}.svc:8080/ || 0", returnStdout: true)
+                    } 
+                } 
+            } 
+        } 
+    } 
+    stage('promote to stage') {
+        steps {
+            echo '### Promote DEV image using Rolling deploy ###'            
+            script {
+                openshift.withCluster(){
+                    //using the STAGE PROJECT
+                    openshift.withProject( "${STAGE_PROJECT} "){  
+                        echo "Using existing STAGE Application." 
+
+                        // in STAGE , DC image trigger is enabled. Deploy is performed using Rolling deployment
+                        echo "Tag image from DEV_PROJECT to STAGE_PROJECT "
+                        //openshift.tag("${DEV_PROJECT}/${APP_NAME}:latest"            , "${STAGE_PROJECT}/${APP_NAME}:v${BUILD_NUMBER}")    
+                        //openshift.tag("${STAGE_PROJECT}/${APP_NAME}:v${BUILD_NUMBER}", "${STAGE_PROJECT}/${APP_NAME}:latest")                               
+                    }
+                }        
+            }
+        }
+    }  
+    stage('promote to prod') {
+        steps {
+            echo '### Promote STAGE image using Blue/Green deploy ###'
+            timeout(time:15, unit:'MINUTES') {
+                input message: "Promote to PROD environment ?", ok: "Promote"
+            }
+            script {
+                openshift.withCluster(){
+                    //using the PROD PROJECT
+                    openshift.withProject( "${PROD_PROJECT} "){  
+                        
+                        // in PROD , DC image trigger is disabled. Deploy is performed using Blue/Green deployment
+                        echo "Tag image from STAGE_PROJECT to PROD_PROJECT "
+                        //openshift.tag("${STAGE_PROJECT}/${APP_NAME}:v${BUILD_NUMBER}" , "${PROD_PROJECT}/${APP_NAME}:v${BUILD_NUMBER}")    
+                        
+                        echo "Create Blue application in parallel with Green application "
+                        //def myProdApp = openshift.newApp("${APP_NAME}:v${BUILD_NUMBER}","--name=${APP_NAME}-blue")
+                        
+                        echo "Sending 100% traffic to the latest version "
+                        //openshift.set("route-backends",APP_NAME,"${APP_NAME}-blue=100%")
+                    }
+                }        
+            }
+        }
+    }  
+  }  // end stages
+}

@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Pipeline
+metadata:
+  name: nodejs-pipeline
+spec:
+  resources:
+    - name: nodejs-git
+      type: git
+    - name: nodejs-image
+      type: image
+  
+  tasks:
+  - name: build
+    taskRef:
+      name: s2i-nodejs
+    resources:       
+      inputs:
+        - name: source
+          resource: nodejs-git
+      outputs:
+        - name: image
+          resource: nodejs-image
+
+  - name: deploy-to-dev
+    taskRef:
+      name: deploy-nodejs-app
+    runAfter:
+      - build
+    resources:
+      inputs:
+        - name: image
+          resource: nodejs-image
+
+  - name: promote-to-stage
+    taskRef:
+      name: promote-nodejs-app
+    runAfter:
+      - build
+    resources:
+      params:
+        - name: IMAGE_TAG_1
+          value: dev
+        - name: IMAGE_TAG_2
+          value: stage
+
+  - name: promote-to-prod
+      taskRef:
+        name: promote-nodejs-app
+      runAfter:
+        - build
+      resources:
+        params:
+          - name: IMAGE_TAG_1
+            value: stage
+          - name: IMAGE_TAG_2
+            value: prod

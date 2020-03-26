@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tekton-dashboard 
+  labels:
+    app: tekton-dashboard
+spec:
+  type: NodePort
+  ports:
+    - port: 9097 
+      name: tekton-dashboard
+      nodePort: 32428
+  selector:
+    app: tekton-dashboard
+---

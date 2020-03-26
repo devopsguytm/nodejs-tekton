@@ -1,0 +1,76 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: deploy-nodejs-app
+spec:
+  inputs:
+    resources:
+      - name: image
+        type: image
+    params:
+      - name: APP_NAME
+        description: The name of the application
+        default: nodejs-tekton
+        type: string
+  steps:
+      - name: create-app
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc get dc $(inputs.params.APP_NAME)
+            if [[ $? -ne 0 ]]
+            then
+                oc new-app -i $(inputs.params.APP_NAME)
+            else
+                echo "Application already exists."
+            fi
+      - name: expose-app
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc get svc $(inputs.params.APP_NAME)
+            if [[ $? -ne 0 ]]
+            then
+                oc expose svc/$(inputs.params.APP_NAME)
+            else
+                echo "Application is already exposed."
+            fi
+      - name: set-app-labels
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite
+      - name: set-app-probes
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc set probe dc/$(inputs.params.APP_NAME) --remove --readiness --liveness
+            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:8080/ --initial-delay-seconds=30
+      - name: set-app-autoscale
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc get hpa $(inputs.params.APP_NAME)
+            if [[ $? -ne 0 ]]
+            then
+                oc autoscale dc $(inputs.params.APP_NAME) --min 1 --max 2 --cpu-percent=75
+            else
+                echo "Application autoscale is already configured."
+            fi
+      - name: describe-app-triggers
+        image: quay.io/openshift/origin-cli:latest
+        workingDir: /workspace/source
+        command: ["/bin/bash", "-c"]
+        args:
+          - |-
+            oc set triggers dc/$(inputs.params.APP_NAME)

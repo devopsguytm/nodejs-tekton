@@ -1,0 +1,22 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: build-nodejs-app
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+  outputs:
+    resources:
+      - name: image
+        type: image
+  steps:
+    - name: create-image-and-push 
+      image: gcr.io/kaniko-project/executor
+      command:
+        - /kaniko/executor
+      args:
+        - "--dockerfile=./source/ci-cd-pipeline/kubernetes-tekton/Dockerfile"
+        - "--destination=$(outputs.resources.image.url)"
+        - "--context=$(inputs.resources.source.path)/"
