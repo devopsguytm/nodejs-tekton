@@ -8,7 +8,7 @@
     "chai-http": "^2.0.1",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
-    "request": "^2.81.0",
+    "request": "^2.81.0"
   },
   "engine": {
     "node": "*",
