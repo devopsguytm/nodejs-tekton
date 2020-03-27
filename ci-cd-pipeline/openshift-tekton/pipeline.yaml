@@ -8,7 +8,21 @@ spec:
       type: git
     - name: nodejs-image
       type: image
-  
+
+  params:
+    - name: APP_NAME
+      description: The name of the application
+      default: nodejs-tekton
+      type: string
+    - name: APP_VERSION
+        description: The version of the application
+        default: 1.0
+        type: string
+    - name: DB_SECRET_CREDENTIALS
+        description: The OCP secret that contains DB credentials
+        default: db-secret-credentials
+        type: string
+
   tasks:
   - name: build
     taskRef:
@@ -30,6 +44,13 @@ spec:
       inputs:
         - name: image
           resource: nodejs-image
+      params:
+        - name: APP_NAME
+          value: "$(params.APP_NAME)"
+        - name: APP_VERSION
+          value: "$(params.APP_VERSION)"
+        - name: DB_SECRET_CREDENTIALS
+          value: "$(params.DB_SECRET_CREDENTIALS)"
 
   - name: promote-to-stage
     taskRef:
@@ -42,15 +63,3 @@ spec:
           value: dev
         - name: IMAGE_TAG_2
           value: stage
-
-  - name: promote-to-prod
-      taskRef:
-        name: promote-nodejs-app
-      runAfter:
-        - build
-      resources:
-        params:
-          - name: IMAGE_TAG_1
-            value: stage
-          - name: IMAGE_TAG_2
-            value: prod

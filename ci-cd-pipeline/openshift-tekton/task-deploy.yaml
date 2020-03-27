@@ -12,6 +12,14 @@ spec:
         description: The name of the application
         default: nodejs-tekton
         type: string
+      - name: APP_VERSION
+          description: The version of the application
+          default: 1.0
+          type: string
+      - name: DB_SECRET_CREDENTIALS
+          description: The version of the application
+          default: db-secret-credentials
+          type: string
   steps:
       - name: create-app
         image: quay.io/openshift/origin-cli:latest
@@ -46,6 +54,9 @@ spec:
         args:
           - |-
             oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite
+            oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite
+            oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION)
+            oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.DB_SECRET_CREDENTIALS)
       - name: set-app-probes
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
