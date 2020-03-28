@@ -7,19 +7,20 @@ spec:
     resources:
       - name: image
         type: image
+
     params:
       - name: APP_NAME
         description: The name of the application
         default: nodejs-tekton
         type: string
       - name: APP_VERSION
-          description: The version of the application
-          default: 1.0
-          type: string
+        description: The version of the application
+        default: 1.0
+        type: string
       - name: DB_SECRET_CREDENTIALS
-          description: The version of the application
-          default: db-secret-credentials
-          type: string
+        description: The version of the application
+        default: db-secret-credentials
+        type: string
   steps:
       - name: create-app
         image: quay.io/openshift/origin-cli:latest
