@@ -20,4 +20,3 @@ spec:
   params:
     - name: url
       value: us.icr.io/cloud-images/nodejs-app:latest
-

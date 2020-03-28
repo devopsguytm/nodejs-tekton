@@ -7,6 +7,7 @@ spec:
     resources:
       - name: source
         type: git
+
   steps:
     - name: deploy-app
       image: lachlanevenson/k8s-kubectl
@@ -15,4 +16,6 @@ spec:
         - "apply"
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy.yaml"
+        - "-n"
+        - "env-dev"
 

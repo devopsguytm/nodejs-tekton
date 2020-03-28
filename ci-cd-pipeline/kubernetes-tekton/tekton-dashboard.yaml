@@ -12,4 +12,3 @@ spec:
       nodePort: 32428
   selector:
     app: tekton-dashboard
----

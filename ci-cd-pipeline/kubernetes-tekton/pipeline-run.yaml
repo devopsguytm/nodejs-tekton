@@ -1,0 +1,15 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: nodejs-pipeline-run
+spec:
+  serviceAccountName: pipeline-run-sa
+  pipelineRef:
+    name: nodejs-pipeline
+  resources:
+    - name: nodejs-git
+      resourceRef:
+        name: nodejs-git
+    - name: nodejs-image
+      resourceRef:
+        name: nodejs-image
