@@ -4,7 +4,9 @@
 `nodejs-basic`           folder is the context root for the image where application is implemented
 
 `openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the build config with pipeline strategy.
+
 `openshift-tekton`       folder contains the OpenShift pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
+
 `kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
 
 
@@ -19,6 +21,7 @@ oc adm policy add-scc-to-user privileged -z pipeline
 oc adm policy add-role-to-user edit -z pipeline
 ```
 - Create Image Stream : nodejs-tekton 
+
 
 OC commands:
 
@@ -38,6 +41,7 @@ tkn start nodejs-pipeline
 ```
 
 # IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
+
 
 ![Tekton Architecture](./ci-cd-pipeline/architecture.jpg?raw=true "Tekton Architecture")
 
@@ -86,7 +90,7 @@ kubectl get pipelinerun -n env-ci -w
 
 7. check pods and logs :
 ```
-kubectl get pods -n env-dev
+kubectl get pods                             -n env-dev
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
