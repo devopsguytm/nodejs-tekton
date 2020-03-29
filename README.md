@@ -1,4 +1,4 @@
-# NodeJs Application Image  for OpenShift 4.X & IBM Kubernetes with Tekton & Jenkins Pipelines
+# NodeJs Application Image  for OpenShift 4.3+ & IBM Kubernetes 1.16+ with Tekton & Jenkins Pipelines
 
 
 `nodejs-basic`           folder is the context root for the image where application is implemented
@@ -10,7 +10,7 @@
 `kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
 
 
-# OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
+# OpenShift v4.3+ -> CI-CD with OpenShift Pipelines 
 
 ![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run")
 
@@ -58,7 +58,7 @@ tkn p start nodejs-pipeline -n env-ci
 
 
 
-# IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
+# IBM Kubernetes 1.16+ -> CI-CD with Tekton Pipeline 
 
 
 ![Tekton Architecture](./ci-cd-pipeline/architecture.jpg?raw=true "Tekton Architecture")
@@ -133,7 +133,7 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-# OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
+# OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
 - Create new CI project : env-ci and DEV project : env-dev
