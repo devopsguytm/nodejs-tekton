@@ -12,6 +12,8 @@
 
 # OpenShift v4.3 -> CI-CD with OpenShift Pipelines 
 
+![Pipeline Run](./ci-cd-pipeline/pipeline.jpg?raw=true "Pipeline Run")
+
 Prerequisites : 
 - Install OpenShift Pipeline Operator
 - Allow pipeline SA to make deploys on other projects :

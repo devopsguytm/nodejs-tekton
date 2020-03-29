@@ -35,7 +35,7 @@ spec:
         - name: image
           resource: nodejs-image
 
-  - name: deploy-to-dev
+  - name: deploy
     taskRef:
       name: deploy-nodejs-app
     runAfter:
