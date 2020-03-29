@@ -6,22 +6,24 @@ spec:
   strategy:
     type: JenkinsPipeline
     jenkinsPipelineStrategy:
-      jenkinsfilePath: openshift/Jenkinsfile
+      jenkinsfilePath: ci-cd-pipeline/openshift-jenkins/Jenkinsfile
       env:
         - name: DEV_PROJECT 
-          value: ci-development
+          value: env-dev
         - name: STAGE_PROJECT
-          value: ci-development
+          value: env-test
         - name: PROD_PROJECT
-          value: ci-development
+          value: env-prod
         - name: APP_NAME
-          value: simple-nodejs-app
+          value: "nodejs-jenkins"
+        - name: APP_VERSION
+          value: "1.0"
   source:
     type: Git
     git:
       uri: 'https://github.com/vladsancira/nodejs-tekton.git'
   triggers:
-    - type: GitLab
-      gitlab:
+    - type: GitHub
+      github:
         secretReference:
-          name: gitlabkey
+          name: githubkey
