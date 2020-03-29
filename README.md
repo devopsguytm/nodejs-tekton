@@ -47,7 +47,7 @@ oc create -f ci-cd-pipeline/openshift-tekton/secrets.yaml          -n env-dev
 ```
 tkn t ls -n env-ci
 tkn p ls -n env-ci
-tkn start nodejs-pipeline -n env-ci
+tkn p start nodejs-pipeline -n env-ci
 ```
 
 3. check application  :
