@@ -11,7 +11,7 @@ const request     = require('request');
 
 app.get('/', function(req, res) {
     
-     request('http://'+rest_api_ip+':'+rest_api_port+'/authors/v1/getauthor?name=Niklas%20Heidloff', { json: true }, (err, res2, body) => {
+       request('http://'+rest_api_ip+':'+rest_api_port+'/authors/v1/getauthor?name=Niklas%20Heidloff', { json: true }, (err, res2, body) => {
 
        var response = '';
        response += '<b>Hello from NodeJS !</b><br><br>';
@@ -20,8 +20,8 @@ app.get('/', function(req, res) {
        if (err) { 
                
 	   response += 'Response from Liberty : '+rest_api_ip+':'+rest_api_port+' -> ERROR';
-     response += '<br><br>';
-     response += 'Secret credentials : USERNAME='+user+'  and  PASSWORD='+pass;
+       response += '<br><br>';
+       response += 'Secret credentials : USERNAME='+user+'  and  PASSWORD='+pass;
 	   res.send(response);
 	       
 	   return console.log(err); 

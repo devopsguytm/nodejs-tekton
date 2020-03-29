@@ -48,8 +48,17 @@ oc create -f ci-cd-pipeline/openshift-tekton/secrets.yaml          -n env-dev
 tkn t ls -n env-ci
 tkn p ls -n env-ci
 tkn start nodejs-pipeline -n env-ci
-
 ```
+
+3. check application  :
+
+![Pipeline Run](./ci-cd-pipeline/deployment.jpg?raw=true "Pipeline Run")
+```
+http://nodejs-tekton-env-dev.ocp-435-beta-free-6c01f3cb6659fae23ff593088211e2a2-0000.us-south.containers.appdomain.cloud
+```
+
+
+
 
 # IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
 
