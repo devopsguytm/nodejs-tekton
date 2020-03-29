@@ -138,46 +138,41 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 # OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
-- Installed Jenkins template
-- Allow jenkins SA to make deploys on other projects :
-```
-oc policy add-role-to-user edit system:serviceaccount:default:jenkins -n ci-development
-```
+- Create new CI project : env-ci and DEV project : env-dev
+- Deploy OCP Jenkins template in project : env-ci
+- Allow jenkins SA to make deploys on other projects
 
 OC commands:
 
-1. create project :
+1. create projects :
 ```
-oc new-project ci-development
+oc new-project env-ci
+oc new-project env-dev
+oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
 2. create build configuration resurce in OpenShift : 
 ```
-oc create -f  ci-cd-pipeline/openshift-jenkins/nodejs-ci-cd-pipeline.yaml 
+oc create -f  ci-cd-pipeline/openshift-jenkins/nodejs-ci-cd-pipeline.yaml  -n env-ci
 ```
 
-3. create secret for GitLab integration : 
+3. create secret for GitHub integration : 
 ```
-oc create secret generic gitlabkey --from-literal=WebHookSecretKey=5f345f345c345
+oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-4. add webkook to GitLab from Settings->Integration : 
-
-https://api.us-west-1.starter.openshift-online.com:6443/apis/build.openshift.io/v1/namespaces/ci-development/buildconfigs/nodejs-pipeline-ci-cd/webhooks/5f345f345c345/gitlab
+4. add webkook to GitLab from Settings -> WebHook : 
 
 5. start pipeline build or push files into GitLab repo : 
 ```
-oc start-build bc/nodejs-pipeline-ci-cd
+oc start-build bc/nodejs-pipeline-ci-cd -n env-ci
 ```
 
 ![Pipeline Run](./ci-cd-pipeline/jenkins.jpg?raw=true "Pipeline Run")
 
+
 6. get routes for simple-nodejs-app : 
 ```
-oc get routes/simple-nodejs-app
+oc get routes/nodejs-jenkins -n env-dev
 ```
-
-7. open host in browser : 
-
-[http://simple-nodejs-app-ci-development.apps.us-west-1.starter.openshift-online.com](http://simple-nodejs-app-ci-development.apps.us-west-1.starter.openshift-online.com)
 
