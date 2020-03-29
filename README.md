@@ -87,13 +87,16 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml        -n en
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml           -n env-ci
 ```
 
-4. create API key for IBM Cloud Container Registry:
+4. create <API_KEY> for IBM Cloud Registry and export PullImage secret from default namespace :
 ```
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
 
 kubectl create secret generic ibm-cr-secret  -n env-ci --type="kubernetes.io/basic-auth" --from-literal=username=iamapikey --from-literal=password=<API_KEY>
 kubectl annotate secret ibm-cr-secret  -n env-ci tekton.dev/docker-0=us.icr.io
+
+kubectl get secret default-us-icr-io --export -o yaml > default-us-icr-io.yaml
+kubectl create -f  default-us-icr-io.yaml -n env-dev
 ```
 
 5. create service account to allow pipeline run and deploy to env-dev namespace :

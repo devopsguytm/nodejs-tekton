@@ -31,6 +31,8 @@ spec:
     spec:
       containers:
       - name: nodejs-app
-        image: us.icr.io/cloud-images/nodejs-app:latest
+        image: us.icr.io/cloud-images/nodejs-app 
         ports:
         - containerPort: 8080
+      imagePullSecrets:
+        - name: default-us-icr-io
