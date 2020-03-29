@@ -19,14 +19,4 @@ spec:
   type: image
   params:
     - name: url
-      value: image-registry.openshift-image-registry.svc:5000/ci-development/nodejs-tekton
----
-
-apiVersion: v1
-kind: Secret
-metadata:
-  name: db-secret-credentials
-type: Opaque
-data:
-  username: SmhvbiBEZWVyZQ==
-  password: TXlTZWNyZXRQYXNzd29yZDE=
+      value: image-registry.openshift-image-registry.svc:5000/env-dev/nodejs-tekton

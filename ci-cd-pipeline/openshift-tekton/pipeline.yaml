@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1alpha1
 kind: Pipeline
 metadata:
   name: nodejs-pipeline
@@ -12,18 +12,16 @@ spec:
   params:
     - name: APP_NAME
       description: The name of the application
-      default: nodejs-tekton
-      type: string
-
+      default: 'nodejs-tekton'      
     - name: APP_VERSION
-        description: The version of the application
-        default: 1.0
-        type: string
-
+      description: The version of the application
+      default: '1.0'      
     - name: DB_SECRET_CREDENTIALS
-        description: The OCP secret that contains DB credentials
-        default: db-secret-credentials
-        type: string
+      description: The OCP secret that contains DB credentials
+      default: 'db-secret-credentials'     
+    - name: DEPLOY_PROJECT
+      description: The project where you deploy the app
+      default: 'env-dev'       
 
   tasks:
   - name: build
@@ -42,26 +40,16 @@ spec:
       name: deploy-nodejs-app
     runAfter:
       - build
+    params:
+        - name: APP_NAME
+          value: "$(params.APP_NAME)"
+        - name: APP_VERSION
+          value: "$(params.APP_VERSION)"  
+        - name: DB_SECRET_CREDENTIALS
+          value: "$(params.DB_SECRET_CREDENTIALS)"  
+        - name: DEPLOY_PROJECT
+          value: "$(params.DEPLOY_PROJECT)"    
     resources:
       inputs:
         - name: image
           resource: nodejs-image
-      params:
-        - name: APP_NAME
-          value: "$(params.APP_NAME)"
-        - name: APP_VERSION
-          value: "$(params.APP_VERSION)"
-        - name: DB_SECRET_CREDENTIALS
-          value: "$(params.DB_SECRET_CREDENTIALS)"
-
-  - name: promote-to-stage
-    taskRef:
-      name: promote-nodejs-app
-    runAfter:
-      - build
-    resources:
-      params:
-        - name: IMAGE_TAG_1
-          value: dev
-        - name: IMAGE_TAG_2
-          value: stage

@@ -16,9 +16,16 @@ Prerequisites :
 - Install OpenShift Pipeline Operator
 - Allow pipeline SA to make deploys on other projects :
 ```
-oc create serviceaccount pipeline
-oc adm policy add-scc-to-user privileged -z pipeline
-oc adm policy add-role-to-user edit -z pipeline
+oc new-project env-ci
+oc new-project env-dev
+
+oc create serviceaccount pipeline -n env-ci
+
+oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
+oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
+
+oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-ci
+oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-dev
 ```
 - Create Image Stream : nodejs-tekton 
 
@@ -27,17 +34,19 @@ OC commands:
 
 1. create Tekton CRDs :
 ```
-oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml
-oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml
-oc create -f ci-cd-pipeline/openshift-tekton/task-test.yaml
-oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml
-oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml
+oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml        -n env-ci
+oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml   -n env-ci
+oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml      -n env-ci
+oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
+
+oc create -f ci-cd-pipeline/openshift-tekton/secrets.yaml          -n env-dev
 ```
 2. execute pipeline :
 ```
-tkn t ls
-tkn p ls
-tkn start nodejs-pipeline
+tkn t ls -n env-ci
+tkn p ls -n env-ci
+tkn start nodejs-pipeline -n env-ci
+
 ```
 
 # IBM Kubernetes 1.16 -> CI-CD with Tekton Pipeline 
