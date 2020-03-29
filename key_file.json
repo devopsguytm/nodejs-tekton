@@ -1,0 +1,14 @@
+{
+	"id": "ApiKey-50bbe7bf-e7a4-4025-91d0-48bc0cbaaf4a",
+	"crn": "crn:v1:bluemix:public:iam-identity::a/be715bf40863463faae285f0035ea347F-2059890F::apikey:ApiKey-50bbe7bf-e7a4-4025-91d0-48bc0cbaaf4a",
+	"iam_id": "IBMid-5500062NTV",
+	"account_id": "be715bf40863463faae285f0035ea347",
+	"name": "k8s-tekton",
+	"description": "Key used by CRDs in K8S with Tekton",
+	"apikey": "TXestbzPqjpyRnVTtXTKMlQb2DUzEPk7JLepPSm56y6C",
+	"locked": false,
+	"entity_tag": "1-a7ab96765aecd35a235d8716689ce861",
+	"created_at": "2020-03-28T21:56+0000",
+	"created_by": "IBMid-5500062NTV",
+	"modified_at": "2020-03-28T21:56+0000"
+}
