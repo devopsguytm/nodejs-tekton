@@ -167,6 +167,8 @@ https://api.us-west-1.starter.openshift-online.com:6443/apis/build.openshift.io/
 oc start-build bc/nodejs-pipeline-ci-cd
 ```
 
+![Pipeline Run](./ci-cd-pipeline/jenkins.jpg?raw=true "Pipeline Run")
+
 6. get routes for simple-nodejs-app : 
 ```
 oc get routes/simple-nodejs-app
