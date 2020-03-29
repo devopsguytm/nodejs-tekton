@@ -53,9 +53,7 @@ tkn p start nodejs-pipeline -n env-ci
 3. check application  :
 
 ![Pipeline Run](./ci-cd-pipeline/deployment.jpg?raw=true "Pipeline Run")
-```
-http://nodejs-tekton-env-dev.ocp-435-beta-free-6c01f3cb6659fae23ff593088211e2a2-0000.us-south.containers.appdomain.cloud
-```
+
 
 
 
