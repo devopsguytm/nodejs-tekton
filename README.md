@@ -132,6 +132,51 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekto
 http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
+# OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
+
+OC commands:
+
+1.  delete all resources
+```
+oc delete all -l build=nodejs-app
+oc delete all -l app=nodejs-app
+```
+
+2.  create new s2i build config based on openshift/nodejs:10 and imagestream
+```
+git clone https://github.com/vladsancira/nodejs-tekton.git
+cd nodejs-tekton
+oc new-build openshift/nodejs:10 --name=nodejs-app --binary=true --strategy=source 
+```
+
+3.  create application image from srouce
+```
+oc start-build bc/nodejs-app --from-dir=./nodejs-basic --wait=true --follow=true
+```
+
+4.  create application based on imagestreamtag : nodejs-app:latest
+```
+oc new-app -i nodejs-app:latest
+oc expose svc/nodejs-app
+oc label dc/nodejs-app app.kubernetes.io/name=nodejs --overwrite
+```
+
+5.  set readiness and livness probes , and change deploy strategy to Recreate 
+
+```
+oc set probe dc/nodejs-app --liveness --get-url=http://:8080/ --initial-delay-seconds=60
+oc patch dc/nodejs-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+```
+FYI : a new deploy will start as DC has an deployconfig change trigger. To check triggers :
+```
+oc set triggers dc/nodejs-app
+```
+
+6. open application from 
+```
+oc get route nodejs-app
+```
+
 
 # DEPRECATED : OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
 
