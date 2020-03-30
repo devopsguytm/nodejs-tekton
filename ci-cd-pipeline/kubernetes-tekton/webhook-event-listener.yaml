@@ -40,7 +40,7 @@ spec:
     - apiVersion: tekton.dev/v1alpha1
       kind: PipelineRun
       metadata:
-        name: nodejs-pipeline-run
+        name: nodejs-pipeline-run-$(params.gitrevision)
         serviceAccountName: pipeline-run-sa
       spec:
         pipelineRef:
