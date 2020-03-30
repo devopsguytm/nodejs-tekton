@@ -4,6 +4,7 @@ metadata:
   name: nodejs-pipeline-listener
 spec:
   serviceAccountName: pipeline-trigger-sa
+  serviceType: NodePort
   triggers:
     - name: nodejs-pipeline-trigger
       bindings:

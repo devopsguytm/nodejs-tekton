@@ -145,18 +145,27 @@ kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/
 kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 ```
 
-2. create ServiceAccount, Role and RoleBinding  :
+2. create ServiceAccount, Role and RoleBinding  : 
 ```
 kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml  -n env-ci
 ```
 
 3. create Pipeline's trigger_template, trigger_binding & event_listener :
+! by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster !
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
 ```
 
-http://<CLUSTER_IP>>:32428/#/pipelineruns
+4. get el-nodejs-pipeline-listener PORT and cluster EXTERNAL-IP
+```
+kubectl get svc el-nodejs-pipeline-listener -n env-ci
+kubectl get nodes -o wide 
+``` 
+
+5. add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push.
+
+6. open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
