@@ -1,0 +1,58 @@
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: nodejs-pipeline-listener
+spec:
+  serviceAccountName: pipeline-trigger-sa
+  triggers:
+    - name: nodejs-pipeline-trigger
+      bindings:
+        - name: nodejs-pipeline-binding
+      template:
+        name: nodejs-pipeline-template
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: nodejs-pipeline-binding
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.url)
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: nodejs-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: nodejs-pipeline-run
+        serviceAccountName: pipeline-run-sa
+      spec:
+        pipelineRef:
+          name: nodejs-pipeline
+        resources:
+          - name: nodejs-git
+            resourceSpec:
+              type: git
+              params:
+                - name: revision
+                  value: $(params.gitrevision)
+                - name: url
+                  value: $(params.gitrepositoryurl)
+          - name: nodejs-image
+            resourceRef:
+              name: nodejs-image

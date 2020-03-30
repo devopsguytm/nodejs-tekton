@@ -128,10 +128,25 @@ kubectl get nodes -o wide
 
 http://<CLUSTER_IP>>:32426/
 
-9. install Tekton Dashboard :
+
+# IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
+
+
+1. install Tekton Dashboard and triggers :
 ```
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+```
+
+2. create ServiceAccount, Role and RoleBinding  :
+```
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml         -n env-ci
+```
+
+3. create Pipeline's trigger_template, trigger_binding & event_listener :
+```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekton-pipelines
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
 ```
 
 http://<CLUSTER_IP>>:32428/#/pipelineruns
