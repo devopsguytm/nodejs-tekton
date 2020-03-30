@@ -41,13 +41,10 @@ spec:
       kind: PipelineRun
       metadata:
         name: nodejs-pipeline-run-$(params.gitrevision)
-        serviceAccountName: pipeline-run-sa
       spec:
+        serviceAccountName: pipeline-run-sa
         pipelineRef:
           name: nodejs-pipeline
-        params:
-          - name: DEPLOY_ENVIRONMENT
-            value: 'env-dev'
         resources:
           - name: nodejs-git
             resourceRef:
@@ -55,3 +52,6 @@ spec:
           - name: nodejs-image
             resourceRef:
               name: nodejs-image
+        params:
+          - name: DEPLOY_ENVIRONMENT
+            value: 'env-dev'
