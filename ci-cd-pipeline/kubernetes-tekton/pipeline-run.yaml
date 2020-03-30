@@ -13,3 +13,6 @@ spec:
     - name: nodejs-image
       resourceRef:
         name: nodejs-image
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      value: 'env-dev'

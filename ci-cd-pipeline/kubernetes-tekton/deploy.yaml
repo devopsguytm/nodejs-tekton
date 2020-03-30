@@ -34,5 +34,16 @@ spec:
         image: us.icr.io/cloud-images/nodejs-app 
         ports:
         - containerPort: 8080
+        env:
+          - name: "USERNAME"
+            valueFrom:
+              secretKeyRef:
+                name: db-secret-credentials
+                key: username
+          - name: "PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                name: db-secret-credentials
+                key: password
       imagePullSecrets:
         - name: default-us-icr-io

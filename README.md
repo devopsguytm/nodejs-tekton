@@ -103,19 +103,24 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml         -
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
 ```
 
-6. execute pipeline via Pipeline Run and watch :
+6. create application secrets which will be mounted as ENV variable :
+```
+kubectl apply -f ci-cd-pipeline/kubernetes-tekton/secrets.yaml -n env-dev
+```
+
+7. execute pipeline via Pipeline Run and watch :
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline-run.yaml -n env-ci
 kubectl get pipelinerun -n env-ci -w
 ```
 
-7. check pods and logs :
+8. check pods and logs :
 ```
 kubectl get pods                             -n env-dev
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
-8. open browser with cluster IP and port 32426 :
+9. open browser with cluster IP and port 32426 :
 get Cluster Public IP :
 ```
 kubectl get nodes -o wide
