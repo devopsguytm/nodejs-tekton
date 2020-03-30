@@ -169,6 +169,8 @@ kubectl get nodes -o wide
 
 6. open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
 
+![Webhook](./ci-cd-pipeline/dashboard.jpg?raw=true "Webhook") 
+
 
 
 # OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
