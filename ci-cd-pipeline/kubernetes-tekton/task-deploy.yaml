@@ -22,4 +22,3 @@ spec:
         - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy.yaml"
         - "-n"
         - "$(inputs.params.DEPLOY_ENVIRONMENT)"
-

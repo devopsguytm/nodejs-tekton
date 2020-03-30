@@ -165,6 +165,8 @@ kubectl get nodes -o wide
 
 5. add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push.
 
+![Webhook](./ci-cd-pipeline/webhook-tekton.jpg?raw=true "Webhook") 
+
 6. open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
