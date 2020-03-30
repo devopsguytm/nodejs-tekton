@@ -131,6 +131,13 @@ http://<CLUSTER_IP>>:32426/
 
 # IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
 
+[https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
+[https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md](https://github.com/tektoncd/triggers/blob/master/docs/triggertemplates.md)
+[https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md](https://github.com/tektoncd/triggers/blob/master/docs/eventlisteners.md)
+
+Example :
+[https://github.com/tektoncd/triggers/tree/master/examples](https://github.com/tektoncd/triggers/tree/master/examples)
+
 
 1. install Tekton Dashboard and triggers :
 ```
@@ -140,7 +147,7 @@ kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/
 
 2. create ServiceAccount, Role and RoleBinding  :
 ```
-kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/service-account-webhook.yaml         -n env-ci
+kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml  -n env-ci
 ```
 
 3. create Pipeline's trigger_template, trigger_binding & event_listener :
@@ -150,6 +157,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n
 ```
 
 http://<CLUSTER_IP>>:32428/#/pipelineruns
+
 
 
 # OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
