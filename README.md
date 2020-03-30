@@ -133,7 +133,7 @@ http://<CLUSTER_IP>>:32428/#/pipelineruns
 
 
 
-# OpenShift v4.2+ -> CI-CD with Jenkins Pipeline 
+# DEPRECATED : OpenShift v4.2 -> CI-CD with Jenkins Pipeline 
 
 Prerequisites : 
 - Create new CI project : env-ci and DEV project : env-dev
