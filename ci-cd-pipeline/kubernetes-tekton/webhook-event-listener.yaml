@@ -45,15 +45,13 @@ spec:
       spec:
         pipelineRef:
           name: nodejs-pipeline
+        params:
+          - name: DEPLOY_ENVIRONMENT
+            value: 'env-dev'
         resources:
           - name: nodejs-git
-            resourceSpec:
-              type: git
-              params:
-                - name: revision
-                  value: $(params.gitrevision)
-                - name: url
-                  value: $(params.gitrepositoryurl)
+            resourceRef:
+              name: nodejs-git
           - name: nodejs-image
             resourceRef:
               name: nodejs-image
