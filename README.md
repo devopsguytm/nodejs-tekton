@@ -144,7 +144,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 ![Pipeline Design](./images/pipeline-design.jpg?raw=true "Pipeline Design")
 
 
-**Steps for creating the CI-CD pipeline**
+**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
 ----
 
 1. Create Tekton Resources , Taks and Pipeline
@@ -184,7 +184,7 @@ http://<CLUSTER_IP>>:32426/
 
 ---
 
-### Create Tekton Pipeline WebHooks for Git 
+## Create Tekton Pipeline WebHooks for Git 
 
 **Architecture**
 ----
@@ -239,6 +239,7 @@ kubectl get nodes -o wide
 ---
 
 ![IBM](images/ocp2.png?raw=true "IBM") 
+
 ## Create application image using S2I (source to image) and deploy it 
 
 **Steps for creating the Pipeline and WebHook**
@@ -305,7 +306,7 @@ oc new-project env-dev
 oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
-**Steps**
+**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
 ----
 
 1. Create BuildConifg resource in OpenShift : 
