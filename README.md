@@ -1,4 +1,4 @@
-# OpenShift and K8S on IBM Cloud with Tekton and Jenkins
+# Tekton, OpenShift and K8S on IBM Cloud
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
@@ -246,7 +246,6 @@ oc label dc/nodejs-app app.kubernetes.io/name=nodejs --overwrite
 ```
 
 5.  Set readiness and livness probes , and change deploy strategy to Recreate 
-
 ```
 oc set probe dc/nodejs-app --liveness --get-url=http://:8080/ --initial-delay-seconds=60
 oc patch dc/nodejs-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
@@ -265,6 +264,8 @@ oc get route nodejs-app
 
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
 ## DEPRECATED : Continuous Integration - Continuous Delivery with Jenkins Pipelines 
+
+**You can still use the Jenkinsfile inside a Jenkins container.**
 
 **Prerequisites**
 
