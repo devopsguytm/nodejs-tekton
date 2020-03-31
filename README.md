@@ -41,6 +41,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 ## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
+----
  
 - Install OpenShift Pipeline Operator
 - Create `env-ci` and `env-dev` Projects
@@ -61,7 +62,8 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-dev
 ```
 
-**Steps for creating the CI-CD pipeline**
+**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
+----
 
 0. Clone Git project
 ```
@@ -99,6 +101,7 @@ tkn p start nodejs-pipeline -n env-ci
 
 **Prerequisites**
 ----
+
 - Clone Git project
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
@@ -181,8 +184,10 @@ http://<CLUSTER_IP>>:32426/
 
 ---
 
-**Create Tekton Pipeline WebHooks for Git - Architecture**
+### Create Tekton Pipeline WebHooks for Git 
 
+**Architecture**
+----
 
 ![Tekton Architecture](./images/architecture.jpg?raw=true "Tekton Architecture")
 
@@ -192,6 +197,7 @@ http://<CLUSTER_IP>>:32426/
 
 
 **Prerequisites**
+---
 
 - Install Tekton Dashboard and Tekton Triggers
 ```
@@ -201,6 +207,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/tekton-dashboard.yaml -n tekto
 ```
 
 **Steps for creating the WebHook**
+---
 
 1. Create ServiceAccount, Role and RoleBinding 
 ```
@@ -208,7 +215,7 @@ kubectl apply  -f ci-cd-pipeline/kubernetes-tekton/webhook-service-account.yaml 
 ```
 
 2. Create Pipeline's trigger_template, trigger_binding & event_listener<br>
-**by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster**
+( by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster )
 
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/webhook-event-listener.yaml -n env-ci 
@@ -235,6 +242,7 @@ kubectl get nodes -o wide
 ## Create application image using S2I (source to image) and deploy it 
 
 **Steps for creating the Pipeline and WebHook**
+----
 
 1.  Delete all resources
 ```
@@ -284,6 +292,7 @@ oc get route nodejs-app
 **You can still use the Jenkinsfile inside a Jenkins container.**
 
 **Prerequisites**
+----
 
 - Create new CI project `env-ci` and DEV project `env-dev`
 ```
@@ -297,6 +306,7 @@ oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
 **Steps**
+----
 
 1. Create BuildConifg resource in OpenShift : 
 ```
