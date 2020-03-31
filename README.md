@@ -22,7 +22,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 * [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
 
 
-**Content**
+**Repository Content**
 
 * `nodejs-basic`            folder is the context root for the image where application is implemented.
 
