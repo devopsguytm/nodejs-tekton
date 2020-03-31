@@ -1,6 +1,6 @@
-# OpenShift on IBM Cloud with Tekton and Jenkins
+# OpenShift and K8S on IBM Cloud with Tekton and Jenkins
 
-![IBM](./images/os_logo.png?raw=true "IBM")
+![IBM](./images/os-logo.jpg?raw=true "IBM")
 
 [Red Hat OpenShift on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-why_openshift) is an extension of the IBM Cloud Kubernetes Service, where IBM manages OpenShift Container Platform for you. 
 
@@ -12,7 +12,7 @@ In order to run these workshops, you need an [IBM Cloud account](https://cloud.i
 
 ---
 
-## Deploy NodeJs Application using Tekton Pipelines
+## Deploy NodeJs Application using Tekton and Jenkins Pipeline 
 
 **Content**
 
