@@ -98,7 +98,7 @@ tkn p start nodejs-pipeline -n env-ci
 ## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
-
+----
 - Clone Git project
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
@@ -136,12 +136,13 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 ```
 
 **Pipeline design**
+----
 
 ![Pipeline Design](./images/pipeline-design.jpg?raw=true "Pipeline Design")
 
 
 **Steps for creating the CI-CD pipeline**
-
+----
 
 1. Create Tekton Resources , Taks and Pipeline
 ```
