@@ -16,6 +16,12 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 ## Deploy NodeJs Application using Tekton and Jenkins Pipeline 
 
+**Resources**
+
+[S2I Build Task from OpenShift catalog](https://github.com/openshift/pipelines-catalog)
+[Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
+
+
 **Content**
 
 * `nodejs-basic`            folder is the context root for the image where application is implemented.
