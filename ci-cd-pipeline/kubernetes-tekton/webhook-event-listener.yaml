@@ -49,9 +49,14 @@ spec:
           - name: nodejs-git
             resourceRef:
               name: nodejs-git
-          - name: nodejs-image
+          - name: nodejs-image-dev
             resourceRef:
-              name: nodejs-image
+              name: nodejs-image-dev
+          - name: nodejs-image-stage
+            resourceRef:
+              name: nodejs-image-stage
         params:
           - name: DEPLOY_ENVIRONMENT
             value: 'env-dev'
+          - name: PROMOTE_ENVIRONMENT
+            value: 'env-stage'

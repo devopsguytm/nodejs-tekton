@@ -6,13 +6,18 @@ spec:
   resources:
     - name: nodejs-git
       type: git
-    - name: nodejs-image
+    - name: nodejs-image-dev
+      type: image
+    - name: nodejs-image-stage
       type: image
 
   params:
     - name: DEPLOY_ENVIRONMENT
       description: The environment where you deploy the app
       default: 'env-dev'
+    - name: PROMOTE_ENVIRONMENT
+      description: The environment where you deploy the app
+      default: 'env-stage'
 
   tasks:
   - name: build
@@ -24,7 +29,7 @@ spec:
           resource: nodejs-git
       outputs:
         - name: image
-          resource: nodejs-image
+          resource: nodejs-image-dev
 
   - name: deploy
     taskRef:
@@ -38,3 +43,30 @@ spec:
       inputs:
         - name: source
           resource: nodejs-git
+
+  - name: test
+    taskRef:
+      name: test-nodejs-app
+    runAfter:
+      - deploy
+    params:
+      - name: DEPLOY_ENVIRONMENT
+        value: "$(params.DEPLOY_ENVIRONMENT)"
+
+  - name: promote
+    taskRef:
+      name: promote-nodejs-app
+    runAfter:
+      - test
+    params:
+      - name: PROMOTE_ENVIRONMENT
+        value: "$(params.PROMOTE_ENVIRONMENT)"
+    resources:
+      inputs:
+        - name: source
+          resource: nodejs-git
+        - name: image
+          resource: nodejs-image-dev
+      outputs:
+        - name: image
+          resource: nodejs-image-stage

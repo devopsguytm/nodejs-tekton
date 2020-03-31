@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1alpha1
+kind: Task
+metadata:
+  name: promote-nodejs-app
+spec:
+  inputs:
+    resources:
+      - name: source
+        type: git
+      - name: image
+        type: image
+    params:
+      - name: PROMOTE_ENVIRONMENT
+        description: The environment where you deploy the app
+        default: 'env-stage'
+        type: string
+  outputs:
+    resources:
+      - name: image
+        type: image
+
+  steps:
+    - name: promote-image
+      image: ibmcom/ibm-cloud-developer-tools-amd64
+      command: ["/bin/sh", "-c"]
+      args:
+        - |-
+          ibmcloud update -f
+          ibmcloud login -a cloud.ibm.com -r us-south --apikey ${API_KEY}
+          ibmcloud plugin list
+          ibmcloud plugin install container-registry -f
+          ibmcloud cr login
+          ibmcloud cr region-set us-south
+          ibmcloud cr image-list
+          ibmcloud cr image-tag $(inputs.resources.image.url) $(outputs.resources.image.url)
+          ibmcloud cr image-list
+      env:
+        - name: "API_KEY"
+          valueFrom:
+            secretKeyRef:
+              name: ibm-cr-secret
+              key: password
+    - name: deploy-image
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "apply"
+        - "-f"
+        - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy-stage.yaml"
+        - "-n"
+        - "$(inputs.params.PROMOTE_ENVIRONMENT)"

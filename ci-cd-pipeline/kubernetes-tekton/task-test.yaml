@@ -1,24 +1,20 @@
 apiVersion: tekton.dev/v1alpha1
 kind: Task
 metadata:
-  name: deploy-nodejs-app
+  name: test-nodejs-app
 spec:
   inputs:
-    resources:
-      - name: source
-        type: git
     params:
       - name: DEPLOY_ENVIRONMENT
         description: The environment where you deploy the app
         default: 'env-dev'
         type: string
   steps:
-    - name: deploy-image
+    - name: test-image
       image: lachlanevenson/k8s-kubectl
       command: ["kubectl"]
       args:
-        - "apply"
-        - "-f"
-        - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy-dev.yaml"
+        - "get"
+        - "pod"
         - "-n"
         - "$(inputs.params.DEPLOY_ENVIRONMENT)"

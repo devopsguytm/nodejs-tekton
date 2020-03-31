@@ -135,6 +135,11 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml         -
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
 ```
 
+**Pipeline design**
+
+![Pipeline Design](./images/pipeline-design.jpg?raw=true "Pipeline Design")
+
+
 **Steps for creating the CI-CD pipeline**
 
 
@@ -143,6 +148,8 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml          -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build-kaniko.yaml  -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml        -n env-ci
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-test.yaml          -n env-ci
+kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-promote.yaml       -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml           -n env-ci
 ```
 
@@ -160,7 +167,7 @@ kubectl get pipelinerun -n env-ci -w
 4. Check Pods and logs :
 ```
 kubectl get pods                             -n env-dev
-kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
+kubectl logs nodejs-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
 5. Open Browser with cluster IP and port 32426 :

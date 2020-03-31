@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+  labels:
+    app: nodejs-app
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: nodejs-app
+      nodePort: 32526
+  selector:
+    app: nodejs-app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+  labels:
+    app: nodejs-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      containers:
+      - name: nodejs-app
+        image: us.icr.io/cloud-images/nodejs-app:stage
+        ports:
+        - containerPort: 8080
+        env:
+          - name: "USERNAME"
+            valueFrom:
+              secretKeyRef:
+                name: db-secret-credentials
+                key: username
+          - name: "PASSWORD"
+            valueFrom:
+              secretKeyRef:
+                name: db-secret-credentials
+                key: password
+      imagePullSecrets:
+        - name: default-us-icr-io
