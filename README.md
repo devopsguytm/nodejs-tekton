@@ -1,13 +1,14 @@
 # NodeJs Application Image  for OpenShift 4.3+ & IBM Kubernetes 1.16+ with Tekton & Jenkins Pipelines
 
 
-`nodejs-basic`           folder is the context root for the image where application is implemented
+`nodejs-basic`           folder is the context root for the NodeJs application
 
-`openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the build config with pipeline strategy.
 
-`openshift-tekton`       folder contains the OpenShift pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
+`openshift-tekton`       folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in OpenShift 4.3
 
-`kubernetes-tekton`      folder contains the Kubernetes pipeline implementation and yaml for creating the build config with Tekton pipeline strategy.
+`kubernetes-tekton`      folder contains the yamls for creating the Tekton Pipeline, Tasks and Resources in Kubernetes 1.16
+
+`openshift-jenkins`      folder contains the Jenkins pipeline implementation and yaml for creating the OpenShift BuildConfig with Jenkins Pipeline strategy.
 
 
 # OpenShift v4.3+ -> CI-CD with OpenShift Pipelines 
@@ -174,7 +175,7 @@ kubectl get nodes -o wide
 
 
 
-# OpenShift v4+ -> Create application image using S2I (source to image) and deploy it 
+# OpenShift v4 -> Create application image using S2I (source to image) and deploy it 
 
 OC commands:
 
@@ -214,7 +215,7 @@ FYI : a new deploy will start as DC has an deployconfig change trigger. To check
 oc set triggers dc/nodejs-app
 ```
 
-6. open application from 
+6. open application 
 ```
 oc get route nodejs-app
 ```
