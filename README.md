@@ -28,7 +28,9 @@ In order to run these workshops, you need an [IBM Cloud account](https://cloud.i
 
 ---
 
-## OpenShift 4.3 : CI-CD with OpenShift Pipelines Operator 
+![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
+
+## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
  
@@ -72,8 +74,6 @@ oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/secrets.yaml   -n env-dev
 ```
 
-![Pipeline Run](./images/pipeline.jpg?raw=true "Pipeline Run")
-
 3. execute pipeline
 ```
 tkn t ls -n env-ci
@@ -81,13 +81,13 @@ tkn p ls -n env-ci
 tkn p start nodejs-pipeline -n env-ci
 ```
 
-4. check application
+![Pipeline Run](./images/pipeline.jpg?raw=true "Pipeline Run")
 
-![Pipeline Run](./images/deployment.jpg?raw=true "Pipeline Run")
 
 ---
 
-## IBM Kubernetes 1.16 : CI-CD with Tekton Pipelines 
+![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
+## Continuous Integration - Continuous Delivery with Tekton Pipelines 
 
 **Prerequisites**
 
@@ -165,9 +165,8 @@ http://<CLUSTER_IP>>:32426/
 
 ---
 
-## IBM Kubernetes 1.16 : Create Tekton WebHooks for Git
+**Create Tekton Pipeline WebHooks for Git - Architecture**
 
-**Architecture**
 
 ![Tekton Architecture](./images/architecture.jpg?raw=true "Tekton Architecture")
 
@@ -216,7 +215,8 @@ kubectl get nodes -o wide
 
 ---
 
-## OpenShift v4 : Create application image using S2I (source to image) and deploy it 
+![IBM](images/ocp2.png?raw=true "IBM") 
+## Create application image using S2I (source to image) and deploy it 
 
 **Steps for creating the Pipeline and WebHook**
 
@@ -263,7 +263,8 @@ oc get route nodejs-app
 
 ---
 
-## DEPRECATED : OpenShift v4.2 : CI-CD with Jenkins Pipeline 
+![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
+## DEPRECATED : Continuous Integration - Continuous Delivery with Jenkins Pipelines 
 
 **Prerequisites**
 
