@@ -1,4 +1,4 @@
-# Tekton, OpenShift and K8S on IBM Cloud
+# OpenShift, K8S and Tekton on IBM Cloud
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
@@ -35,16 +35,16 @@ In order to run these tutorials, you need an [IBM Cloud account](https://cloud.i
 **Prerequisites**
  
 - Install OpenShift Pipeline Operator
-- Create CI and DEV Projects
+- Create `env-ci` and `env-dev` Projects
 ```
 oc new-project env-ci
 oc new-project env-dev
 ```  
-- Create Image Stream `nodejs-tekton` for storing NodeJS image
+- Create ImageStream `nodejs-tekton` for storing NodeJS Image
 ```
 oc create is nodejs-tekton -n env-dev
 ``` 
-- Allow pipeline SA to make deploys on other projects
+- Allow `pipeline` ServiceAccount to make deploys on other Projects
 ```
 oc create serviceaccount pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
@@ -55,13 +55,13 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 
 **Steps for creating the CI-CD pipeline**
 
-0. clone git project
+0. Clone Git project
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 ```
 
-1. create Tekton resources , taks and pipeline
+1. Create Tekton Resources , Taks and Pipeline
 ```
 oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml        -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml   -n env-ci
@@ -69,12 +69,12 @@ oc create -f ci-cd-pipeline/openshift-tekton/task-deploy.yaml      -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/pipeline.yaml         -n env-ci
 ```
 
-2. create application secrets which will be mounted as ENV variable :
+2. Create application Secret which will be mounted as an environment variable inside NodeJs Pod :
 ```
 oc create -f ci-cd-pipeline/openshift-tekton/secrets.yaml   -n env-dev
 ```
 
-3. execute pipeline
+3. Execute Pipeline
 ```
 tkn t ls -n env-ci
 tkn p ls -n env-ci
@@ -91,25 +91,25 @@ tkn p start nodejs-pipeline -n env-ci
 
 **Prerequisites**
 
-- Clone git project
+- Clone Git project
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 ```
 
-- Install Tekton pipelines in default `tekton-pipelines` namespace :
+- Install Tekton Pipelines in default `tekton-pipelines` Namespace :
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
 kubectl get pods --namespace tekton-pipelines
 ```
 
-- Create new `env-dev` and `env-ci` namespaces :
+- Create new `env-dev` and `env-ci` Namespaces :
 ```
 kubectl create namespace env-dev
 kubectl create namespace env-ci
 ```
 
-- Create <API_KEY> for IBM Cloud Registry and export PullImage secret from `default` namespace :
+- Create <API_KEY> for IBM Cloud Registry and export PullImage secret from `default` Namespace :
 ```
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
@@ -121,7 +121,7 @@ kubectl get secret default-us-icr-io --export -o yaml > default-us-icr-io.yaml
 kubectl create -f  default-us-icr-io.yaml -n env-dev
 ```
 
-- Create Service Account to allow pipeline to run and deploy to `env-dev` namespace :
+- Create ServiceAccount to allow the Pipeline to run and deploy to `env-dev` Namespace :
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account.yaml         -n env-ci
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -n env-dev
@@ -130,7 +130,7 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 **Steps for creating the CI-CD pipeline**
 
 
-1. create Tekton resources , taks and pipeline
+1. Create Tekton Resources , Taks and Pipeline
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/resources.yaml          -n env-ci
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-build-kaniko.yaml  -n env-ci
@@ -138,24 +138,24 @@ kubectl create -f ci-cd-pipeline/kubernetes-tekton/task-deploy.yaml        -n en
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline.yaml           -n env-ci
 ```
 
-2. create application secrets which will be mounted as ENV variable :
+2. Create application Secret which will be mounted as an environment variable inside NodeJs Pod:
 ```
 kubectl apply -f ci-cd-pipeline/kubernetes-tekton/secrets.yaml -n env-dev
 ```
 
-3. execute pipeline via Pipeline Run and watch :
+3. Execute Pipeline via PipelineRun and watch :
 ```
 kubectl create -f ci-cd-pipeline/kubernetes-tekton/pipeline-run.yaml -n env-ci
 kubectl get pipelinerun -n env-ci -w
 ```
 
-4. check pods and logs :
+4. Check Pods and logs :
 ```
 kubectl get pods                             -n env-dev
 kubectl logs liberty-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
-5. open browser with cluster IP and port 32426 :
+5. Open Browser with cluster IP and port 32426 :
 get Cluster Public IP :
 ```
 kubectl get nodes -o wide
@@ -226,19 +226,19 @@ oc delete all -l build=nodejs-app
 oc delete all -l app=nodejs-app
 ```
 
-2.  Create new s2i build config based on openshift/nodejs:10 and imagestream
+2.  Create new s2i BuildConfig based on openshift/nodejs:10 and ImageStream
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 oc new-build openshift/nodejs:10 --name=nodejs-app --binary=true --strategy=source 
 ```
 
-3.  Create application image from srouce
+3.  Create application Image from srouce
 ```
 oc start-build bc/nodejs-app --from-dir=./nodejs-basic --wait=true --follow=true
 ```
 
-4.  Create application based on imagestreamtag : nodejs-app:latest
+4.  Create application based on ImageStreamTag : nodejs-app:latest
 ```
 oc new-app -i nodejs-app:latest
 oc expose svc/nodejs-app
@@ -250,7 +250,7 @@ oc label dc/nodejs-app app.kubernetes.io/name=nodejs --overwrite
 oc set probe dc/nodejs-app --liveness --get-url=http://:8080/ --initial-delay-seconds=60
 oc patch dc/nodejs-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
 ```
-FYI : a new deploy will start as DC has an deployconfig change trigger. To check triggers :
+FYI : a new deploy will start as DeploymentConfig has a change trigger activated by default. To check triggers :
 ```
 oc set triggers dc/nodejs-app
 ```
@@ -274,27 +274,27 @@ oc get route nodejs-app
 oc new-project env-ci
 oc new-project env-dev
 ```
-- Deploy OCP Jenkins template in project `env-ci`
-- Allow jenkins SA to make deploys on other projects
+- Deploy Jenkins template in Project `env-ci`
+- Allow `jenkins` ServiceAccount to make deploys on other projects
 ```
 oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 ```
 
 **Steps**
 
-1. create BuildConifg resource in OpenShift : 
+1. Create BuildConifg resource in OpenShift : 
 ```
 oc create -f  ci-cd-pipeline/openshift-jenkins/nodejs-ci-cd-pipeline.yaml  -n env-ci
 ```
 
-2. create secret for GitHub integration : 
+2. Create secret for GitHub integration : 
 ```
 oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-3. add webkook to GitLab from Settings -> WebHook : 
+3. Add webkook to GitLab from Settings -> WebHook : 
 
-4. start pipeline build or push files into GitLab repo : 
+4. Start pipeline build or push files into GitLab repo : 
 ```
 oc start-build bc/nodejs-pipeline-ci-cd -n env-ci
 ```
@@ -302,7 +302,7 @@ oc start-build bc/nodejs-pipeline-ci-cd -n env-ci
 ![Pipeline Run](./images/jenkins.jpg?raw=true "Pipeline Run")
 
 
-4. get routes for simple-nodejs-app : 
+4. Get Route for nodejs-jenkins : 
 ```
 oc get routes/nodejs-jenkins -n env-dev
 ```
