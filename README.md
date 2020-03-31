@@ -63,7 +63,7 @@ git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 ```
 
-1. Create Tekton Resources , Taks and Pipeline
+1. Create Tekton Resources , Tasks and Pipeline
 ```
 oc create -f ci-cd-pipeline/openshift-tekton/resources.yaml        -n env-ci
 oc create -f ci-cd-pipeline/openshift-tekton/task-build-s2i.yaml   -n env-ci
