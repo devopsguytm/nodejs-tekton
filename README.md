@@ -129,6 +129,7 @@ kubectl get nodes -o wide
 http://<CLUSTER_IP>>:32426/
 
 
+
 # IBM Kubernetes 1.16 -> Create Tekton WebHooks for Git
 
 [https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md](https://github.com/tektoncd/triggers/blob/master/docs/triggerbindings.md)
