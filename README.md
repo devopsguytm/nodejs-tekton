@@ -6,9 +6,9 @@
 
 With Red Hat OpenShift on IBM Cloud developers have a fast and secure way to containerize and deploy enterprise workloads in Kubernetes clusters. OpenShift clusters build on Kubernetes container orchestration that offers consistency and flexibility for your development lifecycle operations.
 
-This repository holds a series of workshops that help you as a developer to become familiar with Red Hat OpenShift, how it can be deployed on the IBM Cloud, and how to deploy applications on and with OpenShift.
+This repository holds a series of tutorials that help you as a developer to become familiar with Red Hat OpenShift , Tekton and K8S in IBM Cloud and how to deploy applications on and with OpenShift / K8S.
 
-In order to run these workshops, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
+In order to run these tutorials, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
 
 ---
 
