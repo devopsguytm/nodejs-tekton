@@ -10,6 +10,8 @@ This repository holds a series of tutorials that help you as a developer to beco
 
 In order to run these tutorials, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
 
+IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes and a free of license Red Hat OpenShift 4.3.5 beta cluster. Also, you recieve by default a free IBM Cloud Image Registry with 512MB storage and 5GB Pull Trafic each month. 
+
 ---
 
 ## Deploy NodeJs Application using Tekton and Jenkins Pipeline 
