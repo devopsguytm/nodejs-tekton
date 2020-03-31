@@ -1,4 +1,4 @@
-# OpenShift on IBM Cloud Workshops
+# OpenShift on IBM Cloud with Tekton and Jenkins
 
 ![IBM](./images/os_logo.png?raw=true "IBM")
 
@@ -91,6 +91,12 @@ tkn p start nodejs-pipeline -n env-ci
 
 **Prerequisites**
 
+- Clone git project
+```
+git clone https://github.com/vladsancira/nodejs-tekton.git
+cd nodejs-tekton
+```
+
 - Install Tekton pipelines in default `tekton-pipelines` namespace :
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
@@ -123,11 +129,6 @@ kubectl apply -f ci-cd-pipeline/kubernetes-tekton/service-account-binding.yaml -
 
 **Steps for creating the CI-CD pipeline**
 
-0. clone git project
-```
-git clone https://github.com/vladsancira/nodejs-tekton.git
-cd nodejs-tekton
-```
 
 1. create Tekton resources , taks and pipeline
 ```
@@ -217,7 +218,7 @@ kubectl get nodes -o wide
 
 ## OpenShift v4 : Create application image using S2I (source to image) and deploy it 
 
-**Steps for creating the WebHook**
+**Steps for creating the Pipeline and WebHook**
 
 1.  Delete all resources
 ```
@@ -255,7 +256,7 @@ FYI : a new deploy will start as DC has an deployconfig change trigger. To check
 oc set triggers dc/nodejs-app
 ```
 
-6. Open application from 
+6. Open application
 ```
 oc get route nodejs-app
 ```
@@ -279,7 +280,7 @@ oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
 
 **Steps**
 
-1. create build configuration resurce in OpenShift : 
+1. create BuildConifg resource in OpenShift : 
 ```
 oc create -f  ci-cd-pipeline/openshift-jenkins/nodejs-ci-cd-pipeline.yaml  -n env-ci
 ```
