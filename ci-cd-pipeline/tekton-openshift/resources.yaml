@@ -14,9 +14,20 @@ spec:
 apiVersion: tekton.dev/v1alpha1
 kind: PipelineResource
 metadata:
-  name: nodejs-image
+  name: nodejs-image-dev
 spec:
   type: image
   params:
     - name: url
       value: image-registry.openshift-image-registry.svc:5000/env-dev/nodejs-tekton
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineResource
+metadata:
+  name: nodejs-image-stage
+spec:
+  type: image
+  params:
+    - name: url
+      value: image-registry.openshift-image-registry.svc:5000/env-stage/nodejs-tekton

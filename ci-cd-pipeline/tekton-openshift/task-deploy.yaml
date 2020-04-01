@@ -7,7 +7,6 @@ spec:
     resources:
       - name: image
         type: image
-
     params:
       - name: APP_NAME
         description: The name of the application
@@ -24,7 +23,7 @@ spec:
       - name: DEPLOY_PROJECT
         description: The project where you deploy the app
         default: 'env-dev'
-        type: string  
+        type: string
 
   steps:
       - name: create-app

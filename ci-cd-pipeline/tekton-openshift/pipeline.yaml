@@ -6,7 +6,9 @@ spec:
   resources:
     - name: nodejs-git
       type: git
-    - name: nodejs-image
+    - name: nodejs-image-dev
+      type: image
+    - name: nodejs-image-stage
       type: image
 
   params:
@@ -21,7 +23,10 @@ spec:
       default: 'db-secret-credentials'     
     - name: DEPLOY_PROJECT
       description: The project where you deploy the app
-      default: 'env-dev'       
+      default: 'env-dev'
+    - name: STAGE_PROJECT
+      description: The project where you deploy the app
+      default: 'env-stage'
 
   tasks:
   - name: build
@@ -33,7 +38,7 @@ spec:
           resource: nodejs-git
       outputs:
         - name: image
-          resource: nodejs-image
+          resource: nodejs-image-dev
 
   - name: deploy
     taskRef:
@@ -52,4 +57,41 @@ spec:
     resources:
       inputs:
         - name: image
-          resource: nodejs-image
+          resource: nodejs-image-dev
+
+  - name: test
+    taskRef:
+      name: test-nodejs-app
+    runAfter:
+      - deploy
+    params:
+      - name: APP_NAME
+        value: "$(params.APP_NAME)"
+      - name: APP_VERSION
+        value: "$(params.APP_VERSION)"
+      - name: DEPLOY_PROJECT
+        value: "$(params.DEPLOY_PROJECT)"
+
+  - name: promote
+    taskRef:
+      name: promote-nodejs-app
+    runAfter:
+      - test
+    params:
+      - name: APP_NAME
+        value: "$(params.APP_NAME)"
+      - name: APP_VERSION
+        value: "$(params.APP_VERSION)"
+      - name: DB_SECRET_CREDENTIALS
+        value: "$(params.DB_SECRET_CREDENTIALS)"
+      - name: DEPLOY_PROJECT
+        value: "$(params.DEPLOY_PROJECT)"
+      - name: PROMOTE_PROJECT
+        value: "$(params.PROMOTE_PROJECT)"
+    resources:
+      inputs:
+        - name: image
+          resource: nodejs-image-dev
+      outputs:
+        - name: image
+          resource: nodejs-image-stage

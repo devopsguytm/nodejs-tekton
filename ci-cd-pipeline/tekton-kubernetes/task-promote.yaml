@@ -46,6 +46,6 @@ spec:
       args:
         - "apply"
         - "-f"
-        - "$(inputs.resources.source.path)/ci-cd-pipeline/kubernetes-tekton/deploy-stage.yaml"
+        - "$(inputs.resources.source.path)/ci-cd-pipeline/tekton-kubernetes/deploy-stage.yaml"
         - "-n"
         - "$(inputs.params.PROMOTE_ENVIRONMENT)"
