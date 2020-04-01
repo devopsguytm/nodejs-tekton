@@ -1,0 +1,61 @@
+apiVersion: tekton.dev/v1alpha1
+kind: EventListener
+metadata:
+  name: nodejs-pipeline-listener
+spec:
+  serviceAccountName: pipeline
+  triggers:
+    - name: nodejs-pipeline-trigger
+      bindings:
+        - name: nodejs-pipeline-binding
+      template:
+        name: nodejs-pipeline-template
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerBinding
+metadata:
+  name: nodejs-pipeline-binding
+spec:
+  params:
+    - name: gitrevision
+      value: $(body.head_commit.id)
+    - name: gitrepositoryurl
+      value: $(body.repository.url)
+---
+
+apiVersion: tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: nodejs-pipeline-template
+spec:
+  params:
+    - name: gitrevision
+      description: The git revision
+      default: master
+    - name: gitrepositoryurl
+      description: The git repository url
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1alpha1
+      kind: PipelineRun
+      metadata:
+        name: nodejs-pipeline-run-$(params.gitrevision)
+      spec:
+        serviceAccountName: pipeline
+        pipelineRef:
+          name: nodejs-pipeline
+        resources:
+          - name: nodejs-git
+            resourceRef:
+              name: nodejs-git
+          - name: nodejs-image-dev
+            resourceRef:
+              name: nodejs-image-dev
+          - name: nodejs-image-stage
+            resourceRef:
+              name: nodejs-image-stage
+        params:
+          - name: DEPLOY_ENVIRONMENT
+            value: 'env-dev'
+          - name: PROMOTE_ENVIRONMENT
+            value: 'env-stage'

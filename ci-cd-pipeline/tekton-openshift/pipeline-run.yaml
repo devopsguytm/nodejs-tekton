@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1alpha1
+kind: PipelineRun
+metadata:
+  name: nodejs-pipeline-run
+spec:
+  serviceAccountName: pipeline
+  pipelineRef:
+    name: nodejs-pipeline
+  resources:
+    - name: nodejs-git
+      resourceRef:
+        name: nodejs-git
+    - name: nodejs-image-dev
+      resourceRef:
+        name: nodejs-image-dev
+    - name: nodejs-image-stage
+      resourceRef:
+        name: nodejs-image-stage
+  params:
+    - name: DEPLOY_ENVIRONMENT
+      value: 'env-dev'
+    - name: PROMOTE_ENVIRONMENT
+      value: 'env-stage'

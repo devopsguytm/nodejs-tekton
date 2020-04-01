@@ -38,15 +38,15 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 **Repository Content**
 
-* `nodejs-basic`            folder is the context root of the NodeJs application.
+* `nodejs-basic     `       folder is the context root of the NodeJs application.
 
-* `ci-cd-pipeline`          folder contains pipeline implementation for different targets.
+* `ci-cd-pipeline   `       folder contains pipeline implementation for different targets.
 
-* `tekton-openshift`        folder contains the [OpenShift Pipelines](https://www.openshift.com/learn/topics/pipelines) implementation and yamls.
+* `tekton-openshift `       folder contains the [OpenShift Pipelines](https://www.openshift.com/learn/topics/pipelines) implementation and yamls.
 
 * `tekton-kubernetes`       folder contains the [Kubernetes Pipelines](https://github.com/tektoncd/pipeline) implementation and yaml.
 
-* `tekton-triggers`         folder contains the implementation for [Tekton Triggers](https://github.com/tektoncd/triggers) for creating a Git WebHook.
+* `tekton-triggers  `       folder contains the implementation for [Tekton Triggers](https://github.com/tektoncd/triggers) for creating a Git WebHook.
 
 * `jenkins-openshift`       folder contains the Jenkins Pipeline implementation (Jenkinsfile) and yaml for creating the BuildConfig with pipeline strategy.
 
@@ -73,7 +73,6 @@ oc create is nodejs-tekton -n env-stage
 ``` 
 - Allow `pipeline` ServiceAccount to make deploys on other Projects
 ```
-oc create serviceaccount pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-stage
@@ -218,15 +217,38 @@ http://<CLUSTER_IP>>:32426/
 
 ---
 
-## 3. Create a Webhook connection
+## 3. Create a WebHook connection
 
 
-In order to create a webhook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
+In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
 Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
-More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers)
+More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers). Also we can use Tekton Dashboard as a web console for viewing all Tekton Resources. 
+
+On OpenShift 4.3 , [TektonCD Triggers](https://github.com/tektoncd/triggers) are already installed as part of the [OpenShift Pipelines Operator](https://www.openshift.com/learn/topics/pipelines),  in `openshift-pipelines` project (namespace), but Tekton Dashboard is not installed. Instead,  we can use the OpenShift Pipeline Web Console.
+
+The mechanism for triggering builds via WebHooks is the same and involves creating an EventListener and exposing that EventListener Service to outside.
 
 ![Tekton Architecture](./images/webhook-architecture-tekton-simple.jpg?raw=true "Tekton Architecture")
 
+
+**For OpenShift we need to**
+----
+
+* create Pipeline's trigger_template, trigger_binding & event_listener
+
+```
+oc create -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-openshift.yaml -n env-ci 
+```
+* create a Route for the event_listener service
+```
+oc expose svc/el-nodejs-pipeline-listener -n env-ci
+oc get route -n env-ci
+```
+*  add this route to out Git WebHook
+
+
+**For Kubernetes we need to**  
+----
 
 0. Install Tekton Dashboard and Tekton Triggers
 ```
@@ -244,7 +266,7 @@ kubectl apply  -f ci-cd-pipeline/tekton-triggers/webhook-service-account.yaml  -
 ( by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster )
 
 ```
-kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener.yaml -n env-ci 
+kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-kubernetes.yaml -n env-ci 
 ```
 
 3. Get el-nodejs-pipeline-listener PORT and cluster EXTERNAL-IP

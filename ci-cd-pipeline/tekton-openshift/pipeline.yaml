@@ -24,7 +24,7 @@ spec:
     - name: DEPLOY_PROJECT
       description: The project where you deploy the app
       default: 'env-dev'
-    - name: STAGE_PROJECT
+    - name: PROMOTE_PROJECT
       description: The project where you deploy the app
       default: 'env-stage'
 
