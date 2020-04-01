@@ -41,14 +41,14 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc tag $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):latest $(outputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest
-            oc tag $(outputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest $(outputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION)
+            oc tag $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest
+            oc tag $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION)
             oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
             if [[ $? -ne 0 ]]
             then
-                oc new-app -i $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
+                oc new-app -i $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)
             else
-                echo "Application already exists."
+                echo "Application already exists. New version = $(inputs.params.APP_VERSION)"
             fi
       - name: expose-app
         image: quay.io/openshift/origin-cli:latest
