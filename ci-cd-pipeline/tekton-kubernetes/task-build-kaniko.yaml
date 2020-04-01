@@ -17,6 +17,6 @@ spec:
       command:
         - /kaniko/executor
       args:
-        - "--dockerfile=./source/ci-cd-pipeline/kubernetes-tekton/Dockerfile"
+        - "--dockerfile=./source/ci-cd-pipeline/tekton-kubernetes/Dockerfile"
         - "--destination=$(outputs.resources.image.url)"
         - "--context=$(inputs.resources.source.path)/"
