@@ -13,12 +13,21 @@ spec:
         default: 'env-dev'
         type: string
   steps:
-    - name: deploy-image
+    - name: deploy-resources
       image: lachlanevenson/k8s-kubectl
       command: ["kubectl"]
       args:
         - "apply"
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/tekton-kubernetes/deploy-dev.yaml"
+        - "-n"
+        - "$(inputs.params.DEPLOY_ENVIRONMENT)"
+    - name: deploy-application
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "rollout"
+        - "restart"
+        - "deployment/liberty-app"
         - "-n"
         - "$(inputs.params.DEPLOY_ENVIRONMENT)"

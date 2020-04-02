@@ -40,12 +40,21 @@ spec:
             secretKeyRef:
               name: ibm-cr-secret
               key: password
-    - name: deploy-image
+    - name: deploy-resources
       image: lachlanevenson/k8s-kubectl
       command: ["kubectl"]
       args:
         - "apply"
         - "-f"
         - "$(inputs.resources.source.path)/ci-cd-pipeline/tekton-kubernetes/deploy-stage.yaml"
+        - "-n"
+        - "$(inputs.params.PROMOTE_ENVIRONMENT)"
+    - name: deploy-application
+      image: lachlanevenson/k8s-kubectl
+      command: ["kubectl"]
+      args:
+        - "rollout"
+        - "restart"
+        - "deployment/liberty-app"
         - "-n"
         - "$(inputs.params.PROMOTE_ENVIRONMENT)"

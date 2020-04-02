@@ -29,9 +29,11 @@ spec:
       labels:
         app: nodejs-app
     spec:
+      terminationGracePeriodSeconds: 30
       containers:
       - name: nodejs-app
-        image: us.icr.io/cloud-images/nodejs-app 
+        image: us.icr.io/cloud-images/nodejs-app:latest
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
         env:
