@@ -37,15 +37,15 @@ spec:
         ports:
         - containerPort: 8080
         env:
-          - name: "USERNAME"
+          - name: "OWM_API_KEY"
             valueFrom:
               secretKeyRef:
-                name: db-secret-credentials
-                key: username
-          - name: "PASSWORD"
+                name: owm-secret-api
+                key: api-key
+          - name: "AUTHORS_API_KEY"
             valueFrom:
               secretKeyRef:
-                name: db-secret-credentials
-                key: password
+                name: authors-secret-api
+                key: api-key
       imagePullSecrets:
         - name: default-us-icr-io

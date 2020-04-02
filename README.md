@@ -52,9 +52,12 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 ---
 
+## 1. Cloud native CI/CD Pipeline on OpenShift
+
+
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## 1. Cloud native CI/CD Pipeline on OpenShift
+
 
 **Prerequisites**
 ----
@@ -123,9 +126,11 @@ tkn p start nodejs-pipeline -n env-ci
 
 ---
 
+## 2. Cloud native CI/CD Pipeline on Kubernetes
+
 ![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
-## 2. Cloud native CI/CD Pipeline on Kubernetes
+
 
 **Prerequisites**
 ----
@@ -286,10 +291,10 @@ kubectl get nodes -o wide
 
 ---
 
+## 4. OpenShift source to image
 
 ![IBM](images/ocp2.png?raw=true "IBM") 
 
-## 4. OpenShift source to image
 
 1.  Create new s2i BuildConfig based on openshift/nodejs:10 and ImageStream
 ```
@@ -333,9 +338,11 @@ oc delete all -l app=nodejs-app
 
 ---
 
+## 5. DEPRECATED : Jenkins CI/CD Pipeline on OpenShift
+
+
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/jenkins2.jpg?raw=true "IBM")
 
-## 5. DEPRECATED : Jenkins CI/CD Pipeline on OpenShift
 
 **You can still use the Jenkinsfile inside a Jenkins container.**
 

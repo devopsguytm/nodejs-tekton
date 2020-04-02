@@ -1,0 +1,53 @@
+extends layout
+block content
+  .container
+      h2 
+        p
+         | Hello from NodeJs. 
+
+      br         
+      br
+      .row
+        .col-md-3
+          form(method="post", action="get_weather")
+            .form-group
+              label.sr-only(for="city") City Name
+              input.form-control( name="city" type="text" placeholder="Enter City Name (for ex: New York)" required='required')
+            button.btn.btn-success(type="submit") Get Weather
+      if error
+        br
+        .alert.alert-danger #{error}
+      if weather
+        .row
+          .col-md-5
+            p
+            br
+            .panel.panel-primary
+              .panel-heading Weather for: #{weather.name}, #{weather.sys.country}
+              .panel-body
+               p Current Temperature = #{weather.main.temp} !{units}, #{weather.weather[0].description}
+               p Humidity = #{weather.main.humidity} &#37;
+               p Min = #{weather.main.temp_min} !{units}
+               p Max = #{weather.main.temp_max} !{units}
+      br         
+      br
+      .row
+        .col-md-3
+          form(method="post", action="get_links")
+            .form-group
+              label.sr-only(for="author") Author Name
+              input.form-control( name="author" type="text" placeholder="Enter Author Name (for ex: Vlad)" required='required')
+            button.btn.btn-success(type="submit") Get Author
+      if error_authors
+        br
+        .alert.alert-danger #{error_authors}
+      if links
+        .row
+          .col-md-5
+            p
+            br
+            .panel.panel-primary
+              .panel-heading References for: #{links.name}
+              .panel-body
+               p Twitter = #{links.twitter}
+               p Blog = #{links.blog}
