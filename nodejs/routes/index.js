@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const fetch = require("node-fetch");
 require('dotenv').config();
+
+var rest_api_ip   = process.env.LIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_TEKTON_SERVICE_HOST || 'liberty-app';
+var rest_api_port = process.env.LIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_TEKTON_SERVICE_PORT || '9080';
+
 const OWM_API_KEY = process.env.OWM_API_KEY || 'none' ;
 const AUTHORS_API_KEY = process.env.MY_API_KEY || 'none' ;
 const UNITS = process.env.UNITS || 'metric';
@@ -13,7 +17,7 @@ router.get('/', function(req, res) {
 
 router.post('/get_links', async function (req,res) {
   let author = req.body.author;
-  let url = `http://173.193.75.183:32527/authors/v1/getauthor?name=${author}&appid=${AUTHORS_API_KEY}`;
+  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}&appid=${AUTHORS_API_KEY}`;
 
   try {
     let data = await fetch(url);
