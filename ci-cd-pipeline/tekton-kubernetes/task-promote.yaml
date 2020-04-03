@@ -55,6 +55,6 @@ spec:
       args:
         - "rollout"
         - "restart"
-        - "deployment/liberty-app"
+        - "deployment/nodejs-app"
         - "-n"
         - "$(inputs.params.PROMOTE_ENVIRONMENT)"
