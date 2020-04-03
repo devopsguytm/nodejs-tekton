@@ -249,7 +249,12 @@ oc create -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-openshift.yam
 oc expose svc/el-nodejs-pipeline-listener -n env-ci
 oc get route -n env-ci
 ```
-*  add this route to out Git WebHook
+*  add this route to out Git WebHook then perfom a push.
+* new PipelineRun will be triggered automatically and visible in the Pipelines Console from `ci-env` Project
+
+
+![Webhook](./images/openshift-pipelines-run.png?raw=true "Webhook") 
+
 
 
 **For Kubernetes we need to**  
@@ -295,27 +300,28 @@ kubectl get nodes -o wide
 
 ![IBM](images/ocp2.png?raw=true "IBM") 
 
+**Steps for building and deploying the application using s2i**
 
-1.  Create new s2i BuildConfig based on openshift/nodejs:10 and ImageStream
+1.  Create a new s2i BuildConfig based on `nodeshift/centos7-s2i-nodejs:latest`
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 oc new-build nodeshift/centos7-s2i-nodejs:latest --name=nodejs-app --binary=true --strategy=source 
 ```
 
-2.  Create application Image from srouce
+2.  Start the build by passing the current folder as input for the new BuildConfig
 ```
 oc start-build bc/nodejs-app --from-dir=./nodejs --wait=true --follow=true
 ```
 
-3.  Create application based on ImageStreamTag : nodejs-app:latest
+3.  Create a new Application based on ImageStreamTag `nodejs-app:latest` from previous step. Then expose an external Route 
 ```
 oc new-app -i nodejs-app:latest
 oc expose svc/nodejs-app
 oc label dc/nodejs-app app.kubernetes.io/name=nodejs --overwrite
 ```
 
-4.  Set readiness and livness probes, change deploy strategy to Recreate and add secrets  
+4.  Set Readiness, Livness probes  and change deploy strategy to Recreate
 ```
 oc set probe dc/nodejs-app --liveness --get-url=http://:8080/ --initial-delay-seconds=60
 oc patch dc/nodejs-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
@@ -333,7 +339,7 @@ oc set triggers dc/nodejs-app
 oc get route nodejs-app
 ```
 
-6.  Delete all resources
+6.  Delete all resources using Labels
 ```
 oc delete all -l build=nodejs-app
 oc delete all -l app=nodejs-app
