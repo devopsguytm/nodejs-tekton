@@ -3,8 +3,8 @@ const router = express.Router();
 const fetch = require("node-fetch");
 require('dotenv').config();
 
-var rest_api_ip   = process.env.LIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_TEKTON_SERVICE_HOST || 'liberty-app';
-var rest_api_port = process.env.LIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_TEKTON_SERVICE_PORT || '9080';
+var rest_api_ip   = process.env.OPENLIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_TEKTON_SERVICE_HOST || 'liberty-app';
+var rest_api_port = process.env.OPENLIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_TEKTON_SERVICE_PORT || '9080';
 
 const OWM_API_KEY = process.env.OWM_API_KEY || 'none' ;
 const AUTHORS_API_KEY = process.env.MY_API_KEY || 'none' ;

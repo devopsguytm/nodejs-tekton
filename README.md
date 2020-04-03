@@ -300,12 +300,12 @@ kubectl get nodes -o wide
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
-oc new-build openshift/nodejs:10 --name=nodejs-app --binary=true --strategy=source 
+oc new-build nodeshift/centos7-s2i-nodejs:latest --name=nodejs-app --binary=true --strategy=source 
 ```
 
 2.  Create application Image from srouce
 ```
-oc start-build bc/nodejs-app --from-dir=./nodejs-basic --wait=true --follow=true
+oc start-build bc/nodejs-app --from-dir=./nodejs --wait=true --follow=true
 ```
 
 3.  Create application based on ImageStreamTag : nodejs-app:latest
@@ -315,10 +315,13 @@ oc expose svc/nodejs-app
 oc label dc/nodejs-app app.kubernetes.io/name=nodejs --overwrite
 ```
 
-4.  Set readiness and livness probes , and change deploy strategy to Recreate 
+4.  Set readiness and livness probes, change deploy strategy to Recreate and add secrets  
 ```
 oc set probe dc/nodejs-app --liveness --get-url=http://:8080/ --initial-delay-seconds=60
 oc patch dc/nodejs-app -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+oc create -f ci-cd-pipeline/tekton-openshift/secrets.yaml
+oc set env dc/nodejs-app --from secret/owm-secret-api
+oc set env dc/nodejs-app --from secret/authors-secret-api
 ```
 FYI : a new deploy will start as DeploymentConfig has a change trigger activated by default. To check triggers :
 ```
