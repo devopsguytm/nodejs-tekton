@@ -373,7 +373,7 @@ oc create -f  ci-cd-pipeline/jenkins-openshift/nodejs-ci-cd-pipeline.yaml  -n en
 oc create secret generic githubkey --from-literal=WebHookSecretKey=5f345f345c345 -n env-ci
 ```
 
-3. Add webkook to GitLab from Settings -> WebHook : 
+3. Add webkook to GitLab from Settings -> WebHook
 
 4. Start pipeline build or push files into GitLab repo : 
 ```
