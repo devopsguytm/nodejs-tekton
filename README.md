@@ -386,4 +386,5 @@ oc start-build bc/nodejs-pipeline-ci-cd -n env-ci
 4. Get Route for nodejs-jenkins : 
 ```
 oc get routes/nodejs-jenkins -n env-dev
+oc get routes/nodejs-jenkins -n env-stage
 ```
