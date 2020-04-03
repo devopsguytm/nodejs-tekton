@@ -32,8 +32,11 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 **Resources**
 
-* [S2I Build Task from OpenShift catalog](https://github.com/openshift/pipelines-catalog)
+* [S2I Build Task from OpenShift Catalog](https://github.com/openshift/pipelines-catalog)
+* [S2I Builder Images Container Catalog](https://github.com/sclorg/?q=s2i)
 * [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
+* [Red Hat Container Images Catalog](https://catalog.redhat.com/software/containers/search?p=1)
+* [Tutorial : Create s2i Builder Image](https://www.openshift.com/blog/create-s2i-builder-image)
 
 
 **Repository Content**
