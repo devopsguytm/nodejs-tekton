@@ -14,7 +14,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 ---
 
-## Deploy NodeJs Application using Tekton and Jenkins Pipeline 
+## Build & Deploy NodeJs Application using Tekton and Jenkins Pipeline 
 
 **Tutorials**
 
@@ -66,7 +66,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 ----
  
 - Install OpenShift Pipeline Operator
-- Create `env-ci` and `env-dev` Projects
+- Create `env-ci`, `env-dev` and `env-stage` Projects
 ```
 oc new-project env-ci
 oc new-project env-dev
@@ -150,7 +150,7 @@ kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/r
 kubectl get pods --namespace tekton-pipelines
 ```
 
-- Create new `env-dev` and `env-ci` Namespaces :
+- Create new `env-stage`,`env-dev` and `env-ci` Namespaces :
 ```
 kubectl create namespace env-stage
 kubectl create namespace env-dev
@@ -212,6 +212,7 @@ kubectl get pipelinerun -n env-ci -w
 ```
 kubectl get pods                            -n env-dev
 kubectl get pods                            -n env-stage
+
 kubectl logs nodejs-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
