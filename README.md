@@ -362,15 +362,17 @@ oc delete all -l app=nodejs-app
 **Prerequisites**
 ----
 
-- Create new CI project `env-ci` and DEV project `env-dev`
+- Create new CI project `env-ci` and DEV,STAGE projects `env-dev`,`env-stage`
 ```
 oc new-project env-ci
 oc new-project env-dev
+oc new-project env-stage
 ```
 - Deploy Jenkins template in Project `env-ci`
 - Allow `jenkins` ServiceAccount to make deploys on other projects
 ```
 oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-dev
+oc policy add-role-to-user edit system:serviceaccount:env-ci:jenkins -n env-stage
 ```
 
 **Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
@@ -396,7 +398,7 @@ oc start-build bc/nodejs-pipeline-ci-cd -n env-ci
 ![Pipeline Run](./images/jenkins.jpg?raw=true "Pipeline Run")
 
 
-4. Get Route for nodejs-jenkins : 
+4. Get Route for `nodejs-jenkins` Service : 
 ```
 oc get routes/nodejs-jenkins -n env-dev
 oc get routes/nodejs-jenkins -n env-stage
