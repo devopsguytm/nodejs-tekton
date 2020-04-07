@@ -16,10 +16,6 @@ spec:
         description: The version of the application
         default: '1.0'
         type: string
-      - name: OWM_API_KEY
-        description: The version of the application
-        default: 'owm-secret-api'
-        type: string
       - name: AUTHORS_API_KEY
         description: The version of the application
         default: 'authors-secret-api'
@@ -75,8 +71,7 @@ spec:
           - |-
             oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.PROMOTE_PROJECT)
             oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.PROMOTE_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.OWM_API_KEY) -n $(inputs.params.PROMOTE_PROJECT)
+            oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)            
             oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.PROMOTE_PROJECT)
       - name: set-app-probes
         image: quay.io/openshift/origin-cli:latest

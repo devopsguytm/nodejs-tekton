@@ -18,9 +18,6 @@ spec:
     - name: APP_VERSION
       description: The version of the application
       default: '1.0'      
-    - name: OWM_API_KEY
-      description: The OCP secret that contains DB credentials
-      default: 'owm-secret-api'
     - name: AUTHORS_API_KEY
       description: The OCP secret that contains DB credentials
       default: 'authors-secret-api'
@@ -53,8 +50,6 @@ spec:
           value: "$(params.APP_NAME)"
         - name: APP_VERSION
           value: "$(params.APP_VERSION)"  
-        - name: OWM_API_KEY
-          value: "$(params.OWM_API_KEY)"
         - name: AUTHORS_API_KEY
           value: "$(params.AUTHORS_API_KEY)"
         - name: DEPLOY_PROJECT
@@ -87,8 +82,6 @@ spec:
         value: "$(params.APP_NAME)"
       - name: APP_VERSION
         value: "$(params.APP_VERSION)"
-      - name: OWM_API_KEY
-        value: "$(params.OWM_API_KEY)"
       - name: AUTHORS_API_KEY
         value: "$(params.AUTHORS_API_KEY)"
       - name: DEPLOY_PROJECT

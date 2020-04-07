@@ -49,10 +49,12 @@ It should take you approximately 1-2 hours to provision the K8s/OpenShift cluste
 
 * [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
 
+* NodeJs Code based on [Reh Hat DO101 Weather application](https://github.com/RedHatTraining/DO101-apps/tree/master/weather)
+
 
 **Repository Content**
 
-* `nodejs-basic     `       folder is the context root of the NodeJs application.
+* `nodejs           `       folder is the context root of the NodeJs application.
 
 * `ci-cd-pipeline   `       folder contains pipeline implementation for different targets.
 

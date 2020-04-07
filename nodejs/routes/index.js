@@ -6,9 +6,7 @@ require('dotenv').config();
 var rest_api_ip   = process.env.OPENLIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_APP_SERVICE_HOST || process.env.LIBERTY_TEKTON_SERVICE_HOST || 'liberty-app';
 var rest_api_port = process.env.OPENLIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_APP_SERVICE_PORT || process.env.LIBERTY_TEKTON_SERVICE_PORT || '9080';
 
-const OWM_API_KEY = process.env.OWM_API_KEY || 'none' ;
-const AUTHORS_API_KEY = process.env.MY_API_KEY || 'none' ;
-const UNITS = process.env.UNITS || 'metric';
+const AUTHORS_API_KEY = process.env.AUTHORS_API_KEY || 'none' ;
 
 /* GET home page. */
 router.get('/', function(req, res) {
@@ -17,53 +15,45 @@ router.get('/', function(req, res) {
 
 router.post('/get_links', async function (req,res) {
   let author = req.body.author;
-  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}&appid=${AUTHORS_API_KEY}`;
+  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}`;
+  let health_url = `http://${rest_api_ip}:${rest_api_port}/health`;
 
-  try {
-    let data = await fetch(url);
-    let links = await data.json();
-    console.log(links);
-    if(links.cod == '404' && links.main == undefined) {
-      res.render('index', {links: null, error_authors: 'Error: Unknown author.'});
-    }
-    else if (links.cod == '401' && links.main == undefined) {
-      res.render('index', {links: null, error_authors: 'Error: Invalid credentials for API call.'});
-    }
-    else {
-      res.render('index', {links: links, error_authors: null});
-    }
+  if(AUTHORS_API_KEY == 'none') {
+    res.render('index', {links: null, error_authors: 'Error: It seems the secret AUTHORS_API_KEY is not set. Please mount the secret `authors-secret-api` as an Environment Variable inside Pod.'});
   }
-  catch (err) {
-    console.log(err);
-    res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty API'});
-  }
-
-});
-
-router.post('/get_weather', async function (req,res) {
-  let city = req.body.city;
-  let url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${UNITS}&appid=${OWM_API_KEY}`;
-
-  try {
-    let data = await fetch(url);
-    let weather = await data.json();
-    console.log(weather);
-    if(weather.cod == '404' && weather.main == undefined) {
-      res.render('index', {weather: null, error: 'Error: Unknown city'});
+  else {
+    try {
+      let data = await fetch(health_url);
+      let health = await data.json();
+      console.log("Health check for OpenLiberty API.");
+      console.log(linhealthks);
+      if(health.outcome != 'up') {
+        console.log('Error: OpenLiberty API Server seems to be down. Please check.');
+        res.render('index', {links: null, error_authors: 'Error: OpenLiberty API Server seems to be down. Please check.'});
+        return;
+      }
+    }  
+    catch (err) {
+      console.log('Error: Unable to invoke OpenLiberty API Health Check. Please check if OpenLiberty server is online.');
+      res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty API Health Check. Please check if OpenLiberty server is online.'});
+      return;
     }
-    else if (weather.cod == '401' && weather.main == undefined) {
-      res.render('index', {weather: null, error: 'Error: Invalid API Key. Please see http://openweathermap.org/faq#error401 for more info.'});
+    try {
+      let data = await fetch(url);
+      let links = await data.json();
+      console.log(links);
+      if(links.cod == '404' && links.main == undefined) {
+        res.render('index', {links: null, error_authors: 'Error: Unknown author.'});
+      }      
+      else {
+        res.render('index', {links: links, error_authors: null});
+      }
     }
-    else {
-      let unit_hex = (UNITS == 'imperial') ? '&#8457' : '&#8451';
-      res.render('index', {weather: weather, error: null, units: unit_hex});
+    catch (err) {
+      console.log(err);
+      res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty API. Please check if OpenLiberty server is online.'});
     }
-  }
-  catch (err) {
-    console.log(err);
-    res.render('index', {weather: null, error: 'Error: Unable to invoke OpenWeatherMap API'});
-  }
-
+  }  
 });
 
 module.exports = router;
