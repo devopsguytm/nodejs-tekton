@@ -18,6 +18,7 @@ router.post('/get_links', async function (req,res) {
   let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}`;
   let health_url = `http://${rest_api_ip}:${rest_api_port}/health`;
 
+
   /* Check if Secret was mountes. */
   if(AUTHORS_API_KEY == 'none') {
     res.render('index', {links: null, error_authors: 'Error: It seems the secret AUTHORS_API_KEY is not set. Please mount the secret `authors-secret-api` as an Environment Variable inside Pod.'});
@@ -28,7 +29,7 @@ router.post('/get_links', async function (req,res) {
       let data = await fetch(health_url);
       let health = await data.json();
       console.log("Health check for OpenLiberty API.");
-      console.log(linhealthks);
+      console.log(health);
       if(health.outcome != 'UP') {
         console.log('Error: OpenLiberty API Server seems to be down. Please check.');
         res.render('index', {links: null, error_authors: 'Error: OpenLiberty API Server seems to be down. Please check.'});
