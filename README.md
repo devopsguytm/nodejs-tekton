@@ -27,7 +27,7 @@ It should take you approximately 1-2 hours to provision the K8s/OpenShift cluste
 
 ---
 
-# Build & Deploy NodeJs Application using Tekton and Jenkins Pipelines 
+# Cloud-native Continuous Integration / Continuous Delivery using Tekton Pipelines 
 
 **Tutorials**
 
