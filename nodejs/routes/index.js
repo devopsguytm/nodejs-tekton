@@ -55,7 +55,7 @@ router.post('/get_links', async function (req,res) {
     }
     catch (err) {
       console.log(err);
-      res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty API. Please check if OpenLiberty server is online.'});
+      res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty Authors API.'});
     }
   }  
 });
