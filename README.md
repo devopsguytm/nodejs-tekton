@@ -8,13 +8,26 @@ With Red Hat OpenShift on IBM Cloud developers have a fast and secure way to con
 
 This repository holds a series of tutorials that help you as a developer to become familiar with Continuous Integration / Continuous Delivery pipelines, Git webhooks, builds and deployments on Red Hat OpenShift 4.3 and K8S 1.16+ using Tekton Pipelines.
 
-In order to run these tutorials, you need an [IBM Cloud account](https://cloud.ibm.com/registration).
 
 IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes and a free of license fee Red Hat OpenShift 4.3.5 beta cluster. Also, you recieve by default a free IBM Cloud Image Registry with 512MB storage and 5GB Pull Trafic each month. 
 
+## Prerequisites
+
+* Register for an [IBM Cloud account](https://cloud.ibm.com/registration).
+* Create a [free K8s cluster in IBM Cloud](https://cloud.ibm.com/docs/containers?topic=containers-getting-started#clusters_gs) 
+* Create an [ OpenShift v4.3 cluster in IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial) 
+* Install and configure [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview)
+* Connfigure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry)
+* Download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the NodeJs project
+* Clone [OpenShift, K8s and Tekton on IBM Cloud](https://github.com/vladsancira/nodejs-tekton) repository from GitHub
+
+## Estimated time 
+
+It should take you approximately 1-2 hours to provision the K8s/OpenShift clusters and to perform this tutorials.  
+
 ---
 
-## Build & Deploy NodeJs Application using Tekton and Jenkins Pipeline 
+# Build & Deploy NodeJs Application using Tekton and Jenkins Pipelines 
 
 **Tutorials**
 
@@ -30,13 +43,11 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 
 
-**Resources**
+**NodeJs Image Resources**
 
 * [S2I Build Task from OpenShift Catalog](https://github.com/openshift/pipelines-catalog)
-* [S2I Builder Images Container Catalog](https://github.com/sclorg/?q=s2i)
+
 * [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
-* [Red Hat Container Images Catalog](https://catalog.redhat.com/software/containers/search?p=1)
-* [Tutorial : Create s2i Builder Image](https://www.openshift.com/blog/create-s2i-builder-image)
 
 
 **Repository Content**
@@ -62,7 +73,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 
 
-**Prerequisites**
+**OpenShift Prerequisites**
 ----
  
 - Install OpenShift Pipeline Operator
@@ -87,7 +98,7 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-stage
 ```
 
-**Pipeline design**
+**OpenShift Pipeline design**
 ----
 
 ![Pipeline Design](images/pipeline-design-openshift-simple.jpg?raw=true "Pipeline Design")
@@ -135,7 +146,7 @@ tkn p start nodejs-pipeline -n env-ci
 
 
 
-**Prerequisites**
+**Kubernetes Prerequisites**
 ----
 
 - Clone Git project
@@ -177,7 +188,7 @@ kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -n env-stage
 ```
 
-**Pipeline design**
+**Kubernetes Pipeline design**
 ----
 
 ![Pipeline Design](images/pipeline-design-tekton-simple.jpg?raw=true "Pipeline Design")
