@@ -23,7 +23,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 
 ## Estimated time 
 
-It should take you approximately 1-2 hours to provision the K8s/OpenShift clusters and to perform this tutorials.  
+It should take you approximately 1-2 hours to provision the OpenShift / K8s clusters and to perform these tutorials.  
 
 ---
 
@@ -49,7 +49,7 @@ It should take you approximately 1-2 hours to provision the K8s/OpenShift cluste
 
 * [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
 
-* NodeJs Code based on [Reh Hat DO101 Weather application](https://github.com/RedHatTraining/DO101-apps/tree/master/weather)
+* NodeJs Code based on [Red Hat DO101 Demo application](https://github.com/RedHatTraining/DO101-apps/tree/master/weather)
 
 
 **Repository Content**
@@ -58,11 +58,11 @@ It should take you approximately 1-2 hours to provision the K8s/OpenShift cluste
 
 * `ci-cd-pipeline   `       folder contains pipeline implementation for different targets.
 
-* `tekton-openshift `       folder contains the [OpenShift Pipelines](https://www.openshift.com/learn/topics/pipelines) implementation and yamls.
+* `tekton-openshift `       folder contains the [OpenShift Pipeline](https://www.openshift.com/learn/topics/pipelines) implementation and yamls resources.
 
-* `tekton-kubernetes`       folder contains the [Kubernetes Pipelines](https://github.com/tektoncd/pipeline) implementation and yaml.
+* `tekton-kubernetes`       folder contains the [Kubernetes Pipeline](https://github.com/tektoncd/pipeline) implementation and yaml resources.
 
-* `tekton-triggers  `       folder contains the implementation for [Tekton Triggers](https://github.com/tektoncd/triggers) for creating a Git WebHook.
+* `tekton-triggers  `       folder contains the implementation for [Tekton Triggers](https://github.com/tektoncd/triggers) for creating a Git WebHook to OpenShift / K8s.
 
 * `jenkins-openshift`       folder contains the Jenkins Pipeline implementation (Jenkinsfile) and yaml for creating the BuildConfig with pipeline strategy.
 
