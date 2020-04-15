@@ -16,7 +16,7 @@ IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes
 * Create a [free K8s cluster in IBM Cloud](https://cloud.ibm.com/docs/containers?topic=containers-getting-started#clusters_gs) 
 * Create an [ OpenShift v4.3 cluster in IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial) 
 * Install and configure [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview)
-* Connfigure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry)
+* Configure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry)
 * Optional : download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the NodeJs project
 
 
@@ -34,7 +34,7 @@ It should take you approximately 1 hour to provision the OpenShift / K8s cluster
 
 * [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#2-cloud-native-cicd-pipeline-on-kubernetes)
 
-* [Create a WebHook connection from Git to a Tekton CI/CD Pipeline](#3-create-a-webhook-connection)
+* [Create a WebHook connection from Git to a Tekton CI/CD Pipeline](#3-create-a-webhook-connection-from-a-git-repo)
 
 
 **Tekton Build Task Resources**
@@ -227,7 +227,7 @@ http://<CLUSTER_IP>>:32426/
 
 ---
 
-## 3. Create a WebHook connection
+## 3. Create a WebHook connection from a Git repo
 
 
 In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
