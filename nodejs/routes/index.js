@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 
 router.post('/get_links', async function (req,res) {
   let author = req.body.author;
-  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}`;
+  let url = `http://${rest_api_ip}:${rest_api_port}/api/v1/getauthor?name=${author}`;
   let health_url = `http://${rest_api_ip}:${rest_api_port}/health`;
 
 
@@ -43,12 +43,14 @@ router.post('/get_links', async function (req,res) {
     }
     /* Perform the call to  OpenLiberty Authors API. */
     try {
-      let data = await fetch(url);
+      let data = await fetch(url);     
       let links = await data.json();
       console.log(links);
-      if(links.cod == '404' && links.main == undefined) {
-        res.render('index', {links: null, error_authors: 'Error: Unknown author.'});
-      }      
+      if (links.code == '404') {
+        res.render('index', {links: null, error_authors: 'Error: Unknown author. Response Code 404.'});
+      } else if (links.code == '500') {
+        res.render('index', {links: null, error_authors: 'Error: Name too short. Response Code 500.'});
+      }       
       else {
         res.render('index', {links: links, error_authors: null});
       }
