@@ -10,7 +10,7 @@ const AUTHORS_API_KEY = process.env.AUTHORS_API_KEY || 'none' ;
 
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { weather: null, err: null, links: null, error_authors: null });
+  res.render('index', { err: null, links: null, error_authors: null });
 });
 
 router.post('/get_links', async function (req,res) {

@@ -1,3 +1,4 @@
+.vscode
 nodejs/node_modules/.bin/acorn
 nodejs/node_modules/.bin/babylon
 nodejs/node_modules/.bin/cleancss
