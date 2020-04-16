@@ -14,59 +14,61 @@ spec:
   params:
     - name: DEPLOY_ENVIRONMENT
       description: The environment where you deploy the app
-      default: 'env-dev'
+      default: "env-dev"
+      type: string
     - name: PROMOTE_ENVIRONMENT
       description: The environment where you deploy the app
-      default: 'env-stage'
+      default: "env-stage"
+      type: string
 
   tasks:
-  - name: build
-    taskRef:
-      name: build-nodejs-app
-    resources:
-      inputs:
-        - name: source
-          resource: nodejs-git
-      outputs:
-        - name: image
-          resource: nodejs-image-dev
+    - name: build
+      taskRef:
+        name: build-nodejs-app
+      resources:
+        inputs:
+          - name: source
+            resource: nodejs-git
+        outputs:
+          - name: image
+            resource: nodejs-image-dev
 
-  - name: deploy
-    taskRef:
-      name: deploy-nodejs-app
-    runAfter:
-      - build
-    params:
-      - name: DEPLOY_ENVIRONMENT
-        value: "$(params.DEPLOY_ENVIRONMENT)"
-    resources:
-      inputs:
-        - name: source
-          resource: nodejs-git
+    - name: deploy
+      taskRef:
+        name: deploy-nodejs-app
+      runAfter:
+        - build
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: "$(params.DEPLOY_ENVIRONMENT)"
+      resources:
+        inputs:
+          - name: source
+            resource: nodejs-git
 
-  - name: test
-    taskRef:
-      name: test-nodejs-app
-    runAfter:
-      - deploy
-    params:
-      - name: DEPLOY_ENVIRONMENT
-        value: "$(params.DEPLOY_ENVIRONMENT)"
+    - name: test
+      taskRef:
+        name: test-nodejs-app
+      runAfter:
+        - deploy
+      params:
+        - name: DEPLOY_ENVIRONMENT
+          value: "$(params.DEPLOY_ENVIRONMENT)"
 
-  - name: promote
-    taskRef:
-      name: promote-nodejs-app
-    runAfter:
-      - test
-    params:
-      - name: PROMOTE_ENVIRONMENT
-        value: "$(params.PROMOTE_ENVIRONMENT)"
-    resources:
-      inputs:
-        - name: source
-          resource: nodejs-git
-        - name: image
-          resource: nodejs-image-dev
-      outputs:
-        - name: image
-          resource: nodejs-image-stage
+    - name: promote
+      taskRef:
+        name: promote-nodejs-app
+      runAfter:
+        - test
+      params:
+        - name: PROMOTE_ENVIRONMENT
+          value: "$(params.PROMOTE_ENVIRONMENT)"
+      resources:
+        inputs:
+          - name: source
+            resource: nodejs-git
+          - name: image
+            resource: nodejs-image-dev
+        outputs:
+          - name: image
+            resource: nodejs-image-stage
