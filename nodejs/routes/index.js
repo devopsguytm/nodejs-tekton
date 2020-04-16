@@ -15,7 +15,7 @@ router.get('/', function(req, res) {
 
 router.post('/get_links', async function (req,res) {
   let author = req.body.author;
-  let url = `http://${rest_api_ip}:${rest_api_port}/api/v1/getauthor?name=${author}`;
+  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}`;
   let health_url = `http://${rest_api_ip}:${rest_api_port}/health`;
 
 
