@@ -8,23 +8,22 @@ var rest_api_port = process.env.OPENLIBERTY_APP_SERVICE_PORT || process.env.LIBE
 
 const AUTHORS_API_KEY = process.env.AUTHORS_API_KEY || 'none' ;
 
+
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { err: null, links: null, error_authors: null });
+  res.render('index', { links: null, error_authors: null });
 });
 
 router.post('/get_links', async function (req,res) {
-  let author = req.body.author;
-  let url = `http://${rest_api_ip}:${rest_api_port}/authors/v1/getauthor?name=${author}`;
+
+  let buff       =  new Buffer(AUTHORS_API_KEY);
+  let base64data =  encodeURIComponent(buff.toString('base64'));
+  let author     =  req.body.author;
+  let url        = `http://${rest_api_ip}:${rest_api_port}/api/v1/getauthor?name=${author}&apikey=${base64data}`;
   let health_url = `http://${rest_api_ip}:${rest_api_port}/health`;
 
-
-  /* Check if Secret was mountes. */
-  if(AUTHORS_API_KEY == 'none') {
-    res.render('index', {links: null, error_authors: 'Error: It seems the secret AUTHORS_API_KEY is not set. Please mount the secret `authors-secret-api` as an Environment Variable inside Pod.'});
-  }
-  else {
     /* Perform HEALTH Check to OpenLiberty Authors API. */
+    console.log("-------------------------------------------------------");
     try {
       let data = await fetch(health_url);
       let health = await data.json();
@@ -45,21 +44,19 @@ router.post('/get_links', async function (req,res) {
     try {
       let data = await fetch(url);     
       let links = await data.json();
+      
       console.log(links);
-      if (links.code == '404') {
-        res.render('index', {links: null, error_authors: 'Error: Unknown author. Response Code 404.'});
-      } else if (links.code == '500') {
-        res.render('index', {links: null, error_authors: 'Error: Name too short. Response Code 500.'});
-      }       
-      else {
-        res.render('index', {links: links, error_authors: null});
-      }
+      if ( data.status > 200 ) 
+          res.render('index', {links: null, error_authors: links.description});      
+      else 
+          res.render('index', {links: links, error_authors: null});
+      
     }
     catch (err) {
       console.log(err);
       res.render('index', {links: null, error_authors: 'Error: Unable to invoke OpenLiberty Authors API.'});
     }
-  }  
+  
 });
 
 module.exports = router;
