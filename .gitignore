@@ -5266,3 +5266,8 @@ nodejs/node_modules/yargs/lib/completion.js
 nodejs/node_modules/yargs/lib/parser.js
 nodejs/node_modules/yargs/lib/usage.js
 nodejs/node_modules/yargs/lib/validation.js
+.DS_Store
+ci-cd-pipeline/.DS_Store
+ci-cd-pipeline/tekton-kubernetes/.DS_Store
+nodejs/.DS_Store
+nodejs/public/.DS_Store
