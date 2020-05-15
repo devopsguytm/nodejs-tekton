@@ -11,6 +11,14 @@ spec:
     resources:
       - name: image
         type: image
+  stepTemplate:       
+    env:
+      - name: "HTTPS_PROXY"
+        value: "http://10.7.17.17:8080"
+      - name: "HTTP_PROXY"
+        value: "http://10.7.17.17:8080"
+      - name: "NO_PROXY"
+        value: "localhost,127.0.0.1,.amsit.dev,10.7.0.0/16"         
   steps:
     - name: create-image-and-push 
       image: gcr.io/kaniko-project/executor

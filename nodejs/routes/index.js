@@ -10,11 +10,11 @@ const AUTHORS_API_KEY = process.env.AUTHORS_API_KEY || 'none' ;
 
 
 /* GET home page. */
-router.get('/', function(req, res) {
+router.get('/nodejs', function(req, res) {
   res.render('index', { links: null, error_authors: null });
 });
 
-router.post('/get_links', async function (req,res) {
+router.post('/nodejs/get_links', async function (req,res) {
 
   let buff       =  new Buffer(AUTHORS_API_KEY);
   let base64data =  encodeURIComponent(buff.toString('base64'));

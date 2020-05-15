@@ -25,6 +25,8 @@ spec:
       command: ["/bin/sh", "-c"]
       args:
         - |-
+          export HTTP_PROXY=http://10.7.17.17:8080
+          export HTTPS_PROXY=http://10.7.17.17:8080
           ibmcloud update -f
           ibmcloud login -a cloud.ibm.com -r us-south --apikey ${API_KEY}
           ibmcloud plugin list

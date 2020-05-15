@@ -1,10 +1,9 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
   name: nodejs-pipeline-listener
 spec:
   serviceAccountName: pipeline-trigger-sa
-  serviceType: NodePort
   triggers:
     - name: nodejs-pipeline-trigger
       bindings:
@@ -13,7 +12,7 @@ spec:
         name: nodejs-pipeline-template
 ---
 
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
   name: nodejs-pipeline-binding
@@ -25,7 +24,7 @@ spec:
       value: $(body.repository.url)
 ---
 
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
   name: nodejs-pipeline-template
