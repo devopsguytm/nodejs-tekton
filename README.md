@@ -58,6 +58,19 @@ Using Tekton Pipelines involves building the application image inside the OpenSh
 
 ---
 
+## Run the NodeJS application locally 
+
+```
+#from repo root folder run :
+
+npm install .
+node ./nodejs/bin/www/
+curl http://localhost:8080/nodejs
+
+````
+
+---
+
 ## 1. Cloud native CI/CD Pipeline on OpenShift
 
 
@@ -146,7 +159,7 @@ cd nodejs-tekton
 
 - Install Tekton Pipelines in default `tekton-pipelines` namespace
 ```
-kubectl apply --filename https://storage.googleapis.com/tekton-releases/latest/release.yaml
+kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 kubectl get pods --namespace tekton-pipelines
 ```
 
@@ -266,7 +279,7 @@ oc get route -n env-ci
 
 0. Install Tekton Dashboard and Tekton Triggers
 ```
-kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.5.3/tekton-dashboard-release.yaml
+kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.6.1.2/tekton-dashboard-release.yaml
 kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 kubectl apply -f ci-cd-pipeline/tekton-triggers/tekton-dashboard.yaml -n tekton-pipelines
 ```
