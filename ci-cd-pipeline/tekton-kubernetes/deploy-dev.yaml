@@ -1,3 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejs-app
+  labels:
+    app: nodejs-app
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      name: nodejs-app
+      nodePort: 32426
+  selector:
+    app: nodejs-app
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -5272,3 +5272,5 @@ ci-cd-pipeline/tekton-kubernetes/.DS_Store
 nodejs/.DS_Store
 nodejs/public/.DS_Store
 package-lock.json
+default-us-icr-io.yaml
+key_file.json

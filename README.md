@@ -1,98 +1,108 @@
-# OpenShift, K8s and Tekton Pipelines on IBM Cloud
+# Build a CI/CD Tekton Pipeline for deploying a Node.js application
 
 ![IBM](./images/os-logo.jpg?raw=true "IBM")
 
-[Red Hat OpenShift on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-why_openshift) is an extension of the IBM Cloud Kubernetes Service, where IBM manages OpenShift Container Platform for you. 
+[Red Hat OpenShift on IBM Cloud]( https://www.ibm.com/cloud/openshift) is an extension of the IBM Cloud Kubernetes Service, where IBM manages an OpenShift Container Platform for you. 
 
-[Tekton Pipelines](https://github.com/tektoncd/pipeline) is an open source project used for creating cloud-native Continuous Integration / Continuous Delivery ( CI/CD ) pipelines that run on Kubernetes using custom resource definitions. Unlike Jenkins, Tekton Pipelines was build secificaly for container environments : run serverless, are container based and support the software lifecycle.
+[Tekton Pipelines]( https://developer.ibm.com/videos/what-is-tekton/) is an open source framework used for creating cloud-native continuous integration and continuous delivery (CI/CD) pipelines that run on Kubernetes. Tekton Pipelines was built specifically for container environments, supports the software lifecycle, and uses a serverless approach.
 
-This repository holds a series of tutorials that help you as a developer to become familiar with  Continuous Integration / Continuous Delivery ( CI/CD ) pipelines and Webhooks on Red Hat OpenShift 4.3 and K8S 1.16+ using Tekton Pipelines.
+In this tutorial, you will become familiar with CI/CD pipelines and webhooks on Red Hat OpenShift 4.3 and Kubernetes 1.17 and higher using Tekton Pipelines.
 
-IBM Cloud offers a free Kubernetes 1.16 cluster for 1 month for testing purposes and a free of license fee Red Hat OpenShift 4.3.5 beta cluster. Also, you recieve by default a free IBM Cloud Image Registry with 512MB storage and 5GB Pull Trafic each month. 
 
 ## Prerequisites
 
-* Register for an [IBM Cloud account](https://cloud.ibm.com/registration).
-* Create a [free K8s cluster in IBM Cloud](https://cloud.ibm.com/docs/containers?topic=containers-getting-started#clusters_gs) 
-* Create an [ OpenShift v4.3 cluster in IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial) 
-* Install and configure [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview)
-* Configure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry)
-* Optional : download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the NodeJs project
+Before you begin this tutorial, please complete the following steps:
+
+1. Register for an [IBM Cloud account](https://cloud.ibm.com/registration).
+2. Create a [free Kubernetes v1.17 cluster on IBM Cloud](https://cloud.ibm.com/docs/containers?topic=containers-getting-started#clusters_gs).
+3. Create an [OpenShift 4.3 cluster on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial).
+4. Install and configure the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview).
+5. Configure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry).
+
+*Optional: Download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the Node.js project.*
+
+Now that you’ve set up your environment, please note that IBM Cloud offers a free Kubernetes 1.17 cluster for one month for testing purposes. You will also receive a free IBM Cloud Image Registry with 512MB of storage and 5GB of pull traffic each month.
+
 
 
 ## Estimated time 
 
-It should take you approximately 1 hour to provision the OpenShift / K8s cluster and to perform these tutorials.  
+It should take you approximately 1 hour to provision the OpenShift / K8s cluster and to perform this tutorial.  
 
 ---
 
-# Cloud-native CI/CD Pipeline using Tekton 
+## Steps
 
-**Tutorials**
+1. [Create a cloud-native CI/CD pipeline on OpenShift 4.3](#create-a-cloud-native-cicd-pipeline-on-openshift-43)
 
-* [Create a Cloud-native CI/CD Pipeline on OpenShift 4.3](#1-cloud-native-cicd-pipeline-on-openshift)
+2. [Create a cloud-native CI/CD pipeline on Kubernetes 1.17+](#create-a-cloud-native-cicd-pipeline-on-kubernetes-117)
+3. [Create a webhook connection from Git to a Tekton CI/CD pipeline](#create-a-webhook-connection-from-git-to-a-tekton-cicd-pipeline)
 
-* [Create a Cloud-native CI/CD Pipeline on Kubernetes 1.16+](#2-cloud-native-cicd-pipeline-on-kubernetes)
+Before you get started, it’s important to understand how the application image is built. Using Tekton Pipelines involves building the application image inside the OpenShift/Kubernetes cluster. When using OpenShift, you use the standard [S2I Build task](https://github.com/openshift/pipelines-catalog) and for Kubernetes you use the [Kaniko Build task](https://github.com/tektoncd/catalog/tree/master/kaniko). 
 
-* [Create a WebHook connection from Git to a Tekton CI/CD Pipeline](#3-create-a-webhook-connection-from-a-git-repo)
+It’s also important to know what each Git folder contains: 
 
+* `nodejs` is the context root of the Node.js application, based on [Red Hat DO101 Demo application](https://github.com/RedHatTraining/DO101-apps/tree/master/weather).
 
-**Tekton Build Task Resources**
+* `tekton-openshift` contains the [OpenShift Pipeline](https://www.openshift.com/learn/topics/pipelines) implementation and YAML resources.
 
-Using Tekton Pipelines involves building the application image inside the OpenShift / Kubernetes cluster. For this on OpenShift we use the standard S2I Build task from RedHat and for Kubernetes we use the Kaniko Build task. 
+* `tekton-kubernetes` contains the [Kubernetes Pipeline](https://github.com/tektoncd/pipeline) implementation and YAML resources.
 
-* [S2I Build Task from OpenShift Catalog](https://github.com/openshift/pipelines-catalog)
+* `tekton-triggers` contains the [Tekton Triggers](https://github.com/tektoncd/triggers) implementation for creating a Git webhook to OpenShift/Kubernetes.
 
-* [Kaniko Build Taks from Tekton Catalog](https://github.com/tektoncd/catalog/tree/master/kaniko)
-
-
-**Repository Content**
-
-* `nodejs           `       - is the context root of the NodeJs application, based on [Red Hat DO101 Demo application](https://github.com/RedHatTraining/DO101-apps/tree/master/weather)
-
-* `tekton-openshift `       - contains the [OpenShift Pipeline](https://www.openshift.com/learn/topics/pipelines) implementation and yaml resources.
-
-* `tekton-kubernetes`       - contains the [Kubernetes Pipeline](https://github.com/tektoncd/pipeline) implementation and yaml resources.
-
-* `tekton-triggers  `       - contains the[Tekton Triggers](https://github.com/tektoncd/triggers) implementation for creating a Git WebHook to OpenShift / K8s.
-
----
-
-## Run the NodeJS application locally 
+If you’d like to use Visual Studio Code to edit and run the Node.js application locally, you can. From the repo root folder run:
 
 ```
-#from repo root folder run :
-
 npm install .
 node ./nodejs/bin/www/
 curl http://localhost:8080/nodejs
+```
 
-````
 
 ---
 
-## 1. Cloud native CI/CD Pipeline on OpenShift
-
-
 ![IBM](images/ocp2.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
+## Create a cloud-native CI/CD pipeline on OpenShift 4.3
 
-**OpenShift Prerequisites**
-----
- 
-- Install OpenShift Pipeline Operator 
-- Create `env-ci`, `env-dev` and `env-stage` projects. In `env-ci` we will store the CI/CD pipeline and all pipeline resources. In `env-dev` and `env-stage` we will deploy the application via image promotion.
+`OpenShift Pipelines` is a cloud-native, continuous integration and continuous delivery (CI/CD) solution based on Kubernetes resources. It uses Tekton building blocks to automate deployments across multiple platforms by abstracting away the underlying implementation details. Tekton introduces a number of standard Custom Resource Definitions (CRDs) for defining CI/CD pipelines that are portable across Kubernetes distributions.
+
+More information can be found here:
+https://docs.openshift.com/container-platform/4.4/pipelines/understanding-openshift-pipelines.html
+
+---
+
+## Prerequisites for creating the Tekton CI/CD pipeline
+
+1. Install the OpenShift Pipelines Operator.
+
+Follow the OpenShift documentation on how to install the OpenShift Pipelines Operator from either WebConsole or CLI:
+
+https://docs.openshift.com/container-platform/4.4/pipelines/installing-pipelines.html#op-installing-pipelines-operator-in-web-console_installing-pipelines 
+
+After successful installation, you will have all related Tekton building blocks created in `pipeline` project.
+
+```
+oc get pods -n pipelines 
+``` 
+
+2. Create `env-ci`, `env-dev` and `env-stage` projects. In `env-ci`, you will store the CI/CD pipeline and all pipeline resources. In `env-dev` and `env-stage`, you will deploy the application through image promotion.
+
 ```
 oc new-project env-ci
 oc new-project env-dev
 oc new-project env-stage
-```  
-- Create ImageStream `nodejs-tekton` for storing NodeJS Image in `env-dev` and `env-stage` projects.
+``` 
+
+3. Create ImageStream `nodejs-tekton` for storing the NodeJ.js image in `env-dev` and `env-stage` projects:
+
 ```
 oc create is nodejs-tekton -n env-dev
 oc create is nodejs-tekton -n env-stage
 ``` 
-- Allow `pipeline` ServiceAccount to make deploys on other `env-dev` and `env-stage` projects
+
+4. Allow the `pipeline` ServiceAccount to make deploys on other `env-dev` and `env-stage` projects:
+
 ```
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-ci
 oc adm policy add-scc-to-user privileged system:serviceaccount:env-ci:pipeline -n env-dev
@@ -101,22 +111,24 @@ oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-dev
 oc adm policy add-role-to-user edit system:serviceaccount:env-ci:pipeline -n env-stage
 ```
+---
+### The image below illustrates what the OpenShift Pipeline design looks like.
 
-**OpenShift Pipeline design**
-----
+
 
 ![Pipeline Design](images/pipeline-design-openshift-simple.jpg?raw=true "Pipeline Design")
 
-**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
-----
+## Create the Tekton CI/CD pipeline
 
-0. Clone Git project
+1. Clone the Git project:
+
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 ```
 
-1. Create Tekton Resources, Tasks and actual Pipeline
+2. Create Tekton resources, tasks, and a pipeline:
+
 ```
 oc create -f ci-cd-pipeline/tekton-openshift/resources.yaml        -n env-ci
 oc create -f ci-cd-pipeline/tekton-openshift/task-build-s2i.yaml   -n env-ci
@@ -126,51 +138,58 @@ oc create -f ci-cd-pipeline/tekton-openshift/task-promote.yaml     -n env-ci
 oc create -f ci-cd-pipeline/tekton-openshift/pipeline.yaml         -n env-ci
 ```
 
-2. Create application Secret which will be mounted as an environment variable inside NodeJs Pod
+3. Create an application secret which will be mounted as an environment variable inside the Node.js pod:
+
 ```
 oc create -f ci-cd-pipeline/tekton-openshift/secrets.yaml   -n env-dev
 oc create -f ci-cd-pipeline/tekton-openshift/secrets.yaml   -n env-stage
 ```
 
-3. Execute Pipeline
+4. Execute the pipeline:
+
 ```
 tkn t ls -n env-ci
 tkn p ls -n env-ci
 tkn p start nodejs-pipeline -n env-ci
 ```
 
+
 ![Pipeline Run](./images/pipeline.jpg?raw=true "Pipeline Run")
 
 ---
 
-## 2. Cloud native CI/CD Pipeline on Kubernetes
-
 ![IBM](./images/k8s.png?raw=true "IBM") ![IBM](images/tekton2.jpg?raw=true "IBM")
 
+## Create a cloud-native CI/CD pipeline on Kubernetes 1.17+
 
-**Kubernetes Prerequisites**
-----
+More info here
 
-- Clone Git project
+## Prerequisites for creating the Tekton CI/CD pipeline
+1. Clone the Git project:
+
 ```
 git clone https://github.com/vladsancira/nodejs-tekton.git
 cd nodejs-tekton
 ```
 
-- Install Tekton Pipelines in default `tekton-pipelines` namespace
+2. Install Tekton Pipelines in the default `tekton-pipelines` namespace:
+
 ```
 kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
 kubectl get pods --namespace tekton-pipelines
 ```
 
-- Create new `env-stage`,`env-dev` and `env-ci` namespaces. In `env-ci` we will store the CI/CD pipeline and all pipeline resources. In `env-dev` and `env-stage` namespaces, we will deploy the application via image promotion.
+3. Create new `env-stage`,`env-dev` and `env-ci` namespaces. In `env-ci`, you will store the CI/CD pipeline and all pipeline resources. In `env-dev` and `env-stage` namespaces, you will deploy the application via image promotion.
+
 ```
 kubectl create namespace env-stage
 kubectl create namespace env-dev
 kubectl create namespace env-ci
 ```
 
-- Create <API_KEY> for IBM Cloud Registry and export PullImage secret from `default` namespace. The <API_KEY> is used for pushing images into IBM Cloud Registry. When creating a K8s cluster, am IBM Cloud Registry pull secrect will be created in `default` namespace (for all regions ) that is used for pulling images from IBM Cloud Registry.
+4. Create an API key for the IBM Cloud Registry and export the PullImage secret from the `default` namespace. The API key is used for pushing images into the IBM Cloud Registry. When creating a Kubernetes cluster, an IBM Cloud Registry pull secret will be created in the `default` namespace (for all regions) that is used for pulling images from the IBM Cloud Registry.
+
+
 ```
 ibmcloud iam api-key-create MyKey -d "this is my API key" --file key_file.json
 cat key_file.json | grep apikey
@@ -183,24 +202,23 @@ kubectl create -f  default-us-icr-io.yaml -n env-dev
 kubectl create -f  default-us-icr-io.yaml -n env-stage
 ```
 
-- Create a new ServiceAccount to allow the Pipeline to run and deploy to `env-dev` namespace. We specify this ServiceAccount in pipeline definition. Also we will bind a custom Role to this ServiceAccount that will enable it to create/delete/edit/.. resources in `env-dev` and `env-stage` namespaces.
+5. Create a new ServiceAccount to enable the pipeline to run and deploy to `env-dev` namespace. You will specify this ServiceAccount in the pipeline definition. Also, you will bind a custom Role to this ServiceAccount that will enable it to create, delete, or edit resources in `env-dev` and `env-stage` namespaces.
 
 ```
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account.yaml         -n env-ci
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -n env-dev
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -n env-stage
 ```
-
-**Kubernetes Pipeline design**
-----
+---
+### Below is an image of the Kubernetes Pipeline design.
 
 ![Pipeline Design](images/pipeline-design-tekton-simple.jpg?raw=true "Pipeline Design")
 
+---
+## Create the Tekton CI/CD pipeline
 
-**Steps for creating the Continuous Integration - Continuous Delivery Pipeline**
-----
+1. Create Tekton resources, task, and the pipeline:
 
-1. Create Tekton Resources , Taks and Pipeline
 ```
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/resources.yaml          -n env-ci
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-build-kaniko.yaml  -n env-ci
@@ -210,19 +228,22 @@ kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-promote.yaml       -n en
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline.yaml           -n env-ci
 ```
 
-2. Create application Secret which will be mounted as an environment variable inside NodeJs Pod:
+2. Create an application secret which will be mounted as an environment variable inside the Node.js pod:
+
 ```
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/secrets.yaml -n env-dev
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/secrets.yaml -n env-stage
 ```
 
-3. Execute Pipeline via PipelineRun and watch :
+3. Execute the pipeline via PipelineRun:
+
 ```
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline-run.yaml -n env-ci
 kubectl get pipelinerun -n env-ci -w
 ```
 
-4. Check Pods and logs :
+4. Check the Node.JS application pods and logs from both environments:
+
 ```
 kubectl get pods                            -n env-dev
 kubectl get pods                            -n env-stage
@@ -230,84 +251,87 @@ kubectl get pods                            -n env-stage
 kubectl logs nodejs-app-76fcdc6759-pjxs7 -f -n env-dev
 ```
 
-5. Open Browser with cluster IP and port 32426 :
-get Cluster Public IP :
+5. View the Node.JS application UI:
+
+Retrieve the Kubernetes cluster EXTERNAL-IP using following command:
 ```
 kubectl get nodes -o wide
 ```
+Then open following URL in a Browser to view the Node.JS application UI:
+http://<EXTERNAL-IP>>:32426/nodejs
 
-http://<CLUSTER_IP>>:32426/
 
 ---
 
-## 3. Create a WebHook connection from a Git repo
+## Create a webhook connection from Git to a Tekton CI/CD pipeline
 
 
-In order to create a WebHook from Git to our Tekton Pipeline we need to install [TektonCD Triggers](https://github.com/tektoncd/triggers) in our K8s cluster. 
-Triggers is a Kubernetes Custom Resource Defintion (CRD) controller that allows you to extract information from events payloads (a "trigger") to create Kubernetes resources.
-More information can be found in the  [TektonCD Triggers Project](https://github.com/tektoncd/triggers). Also we can use Tekton Dashboard as a web console for viewing all Tekton Resources. 
+To create a webhook from Git to your Tekton Pipeline, you need to install [Tekton Triggers](https://github.com/tektoncd/triggers) in your Kubernetes cluster. 
 
-On OpenShift 4.3 , [TektonCD Triggers](https://github.com/tektoncd/triggers) are already installed as part of the [OpenShift Pipelines Operator](https://www.openshift.com/learn/topics/pipelines),  in `openshift-pipelines` project (namespace), but Tekton Dashboard is not installed. Instead,  we can use the OpenShift Pipeline Web Console.
+Tekton Triggers is a Kubernetes custom resource definition (CRD) controller that allows you to extract information from events payloads to create Kubernetes resources. Remember, you can use [the Tekton Dashboard](https://developer.ibm.com/components/tekton/blogs/why-nows-a-great-time-to-use-the-tekton-dashboard) as a web console for viewing all your Tekton resources. 
 
-The mechanism for triggering builds via WebHooks is the same and involves creating an EventListener and exposing that EventListener Service to outside. The EventListener handles external events and recieves a Git payload. This payload is parsed via the TriggerBinding resource for certain information, like `gitrevision` or `gitrepositoryurl`. These variables are then sent to TriggerTemplate resource that will call the Tekton Pipeline via a PipelineRun definition (with optional arguments).
+On OpenShift 4.3, Tekton Triggers is already installed as part of the [OpenShift Pipelines Operator](https://www.openshift.com/learn/topics/pipelines), in the `openshift-pipelines` project (namespace). However, the Tekton Dashboard is not. Instead, you can use the OpenShift Web Console.
+
+The mechanism for triggering builds through webhooks is the same and involves creating an EventListener and exposing that EventListener Service to outside. The EventListener handles external events and receives a Git payload. This payload is parsed through the TriggerBinding resource for certain information, like `gitrevision` or `gitrepositoryurl`. These variables are then sent to the TriggerTemplate resource that calls the Tekton Pipeline via a PipelineRun definition (with optional arguments).
 
 ![Tekton Architecture](./images/webhook-architecture-tekton-simple.jpg?raw=true "Tekton Architecture")
 
 
-**For OpenShift we need to**
-----
+### For OpenShift: 
 
-* create Pipeline's trigger_template, trigger_binding & event_listener
+1. Create `TriggerTemplate`, `TriggerBinding` and EventListener pipelines:
 
 ```
 oc create -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-openshift.yaml -n env-ci 
 ```
-* create a Route for the event_listener service
+
+2. Create a Route for the EventListener service:
+
 ```
 oc expose svc/el-nodejs-pipeline-listener -n env-ci
 oc get route -n env-ci
 ```
-*  add this route to out Git WebHook then perfom a push.
-* new PipelineRun will be triggered automatically and visible in the Pipelines Console from `ci-env` Project
 
+3. Add the Route to Git webhook and then preform a push.
+
+Finally, the new `PipelineRun` will be triggered automatically and visible in the pipelines console `ci-env` project.
 
 ![Webhook](./images/openshift-pipelines-run.png?raw=true "Webhook") 
 
+### For Kubernetes:
 
-**For Kubernetes we need to**  
-----
+1. Install the Tekton Dashboard and Tekton Triggers:
 
-0. Install Tekton Dashboard and Tekton Triggers
 ```
 kubectl apply -f https://github.com/tektoncd/dashboard/releases/download/v0.6.1.2/tekton-dashboard-release.yaml
 kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
 kubectl apply -f ci-cd-pipeline/tekton-triggers/tekton-dashboard.yaml -n tekton-pipelines
 ```
 
-1. Create a new ServiceAccount, Role and RoleBinding. In K8s this new ServiceAccount will be used for running the EventListener and starting the PipelineRun via the TriggerTemplate. The actual Pipeline will still run as the ServiceAccount defined in it.
+2. Create a new ServiceAccount, Role and, RoleBinding. In Kubernetes, this new ServiceAccount will be used for running the EventListener and starting the PipelineRun via the TriggerTemplate. The actual pipeline will still run as the ServiceAccount defined in it.
+
 ```
 kubectl apply  -f ci-cd-pipeline/tekton-triggers/webhook-service-account.yaml  -n env-ci
 ```
 
-2. Create Pipeline's trigger_template, trigger_binding & event_listener<br>
-( by default Event Listener service type is ClusterIP , but we set it to NodePort so it can be triggered from outside cluster )
+3. Create `TriggerTemplate`, `TriggerBinding` and EventListener pipelines. By default, the EventListener service type is ClusterIP. However, you need to set it to NodePort so it can be triggered from outside the cluster.
 
 ```
 kubectl apply -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-kubernetes.yaml -n env-ci 
 ```
 
-3. Get `el-nodejs-pipeline-listener` PORT and cluster EXTERNAL-IP
+4. Retrieve `el-nodejs-pipeline-listener` PORT and cluster EXTERNAL-IP:
+
 ```
 kubectl get svc el-nodejs-pipeline-listener -n env-ci
 kubectl get nodes -o wide 
 ``` 
 
-4. Add 'http://<CLUSTER_IP>>:<EVENT_LISTNER_PORT>' to GitHib as WebHook. Then perform a push.
+5. Add 'http://<EXTERNAL_IP>:<EVENT_LISTNER_PORT>' to GitHib as the webhook. Then perform a push.
 
 ![Webhook](./images/webhook-tekton.jpg?raw=true "Webhook") 
 
-
-5. Open Tekton Dashboard  :  http://<CLUSTER_IP>>:32428/#/pipelineruns
+6. Open the Tekton dashboard, `http://<EXTERNAL-IP>:32428/#/pipelineruns`, to make sure your changes were successful. Your output should look like the following:
 
 ![Webhook](./images/dashboard.jpg?raw=true "Webhook") 
 
@@ -315,4 +339,4 @@ kubectl get nodes -o wide
 
 # Summary 
 
-In this tutorial , we created a Cloud-native CI/CD Tekton Pipeline for building and deploying a NodeJs application in an OpenShift 4.3 / Kubernetes 1.16+ cluster.
+Congratulations! You have successfully created a cloud-native CI/CD Tekton Pipeline for building and deploying a Node.js application in an OpenShift/Kubernetes cluster. If you’d like to continue using Tekton and Red Hat OpenShift, try another tutorial where you can learn how to [Build a Tekton Pipeline to deploy a mobile app back end to OpenShift 4]( https://developer.ibm.com/components/tekton/tutorials/tekton-pipeline-deploy-a-mobile-app-backend-openshift-4).
