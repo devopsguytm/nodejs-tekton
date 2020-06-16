@@ -9,8 +9,6 @@ spec:
       value: master
     - name: url
       value: https://github.com/vladsancira/nodejs-tekton.git
-    - name: httpsProxy
-      value: "10.7.17.17:8080"  
 ---
 
 apiVersion: tekton.dev/v1alpha1
@@ -21,7 +19,7 @@ spec:
   type: image
   params:
     - name: url
-      value: us.icr.io/cloud-images/nodejs-app:latest
+      value: us.icr.io/tekton-pipeline/nodejs-app:latest
 ---
 
 apiVersion: tekton.dev/v1alpha1
@@ -32,4 +30,4 @@ spec:
   type: image
   params:
     - name: url
-      value: us.icr.io/cloud-images/nodejs-app:stage
+      value: us.icr.io/tekton-pipeline/nodejs-app:stage

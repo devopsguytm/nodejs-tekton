@@ -17,7 +17,7 @@ Before you begin this tutorial, please complete the following steps:
 2. Create a [free Kubernetes v1.17 cluster on IBM Cloud](https://cloud.ibm.com/docs/containers?topic=containers-getting-started#clusters_gs).
 3. Create an [OpenShift 4.3 cluster on IBM Cloud](https://cloud.ibm.com/docs/openshift?topic=openshift-openshift_tutorial).
 4. Install and configure the [IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-getting-started#overview).
-5. Configure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry).
+5. Configure the standard [IBM Cloud Container Registry](https://www.ibm.com/cloud/container-registry) by creating in Dallas region (`us.icr.io`) a namespace called: `tekton-pipeline`
 
 *Optional: Download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the Node.js project.*
 
