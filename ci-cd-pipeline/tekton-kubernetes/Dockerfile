@@ -7,9 +7,6 @@ ADD ./nodejs/views        /app/views
 ADD ./nodejs/app.js       /app/
 ADD ./nodejs/package.json /app/
 
-RUN ls -l /app
-
-RUN npm config set proxy http://10.7.17.17:8080 && npm config set https-proxy http://10.7.17.17:8080
 RUN cd /app && npm install
 
 EXPOSE  8080
