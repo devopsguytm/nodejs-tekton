@@ -21,6 +21,8 @@ Before you begin this tutorial, please complete the following steps:
 
 *Optional: Download [Visual Studio Code IDE](https://code.visualstudio.com) for editing the Node.js project.*
 
+*Optional: Download [tkn command line](https://github.com/tektoncd/cli) for easy command line interation with Tekton*
+
 Now that you’ve set up your environment, please note that IBM Cloud offers a free Kubernetes 1.17 cluster for one month for testing purposes. You will also receive a free IBM Cloud Image Registry with 512MB of storage and 5GB of pull traffic each month.
 
 
@@ -82,10 +84,6 @@ https://docs.openshift.com/container-platform/4.4/pipelines/installing-pipelines
 
 After successful installation, you will have all related Tekton building blocks created in `pipeline` project.
 
-```
-oc get pods -n pipelines 
-``` 
-
 2. Create `env-ci`, `env-dev` and `env-stage` projects. In `env-ci`, you will store the CI/CD pipeline and all pipeline resources. In `env-dev` and `env-stage`, you will deploy the application through image promotion.
 
 ```
@@ -145,7 +143,7 @@ oc create -f ci-cd-pipeline/tekton-openshift/secrets.yaml   -n env-dev
 oc create -f ci-cd-pipeline/tekton-openshift/secrets.yaml   -n env-stage
 ```
 
-4. Execute the pipeline:
+4. Execute the `Pipeline` either by using `tkn` command line or via OpenShift Pipelines UI :
 
 ```
 tkn t ls -n env-ci
@@ -153,8 +151,14 @@ tkn p ls -n env-ci
 tkn p start nodejs-pipeline -n env-ci
 ```
 
-
 ![Pipeline Run](./images/pipeline.jpg?raw=true "Pipeline Run")
+
+5. List `PipelineRun` from CI environment :
+```
+tkn pr ls -n env-ci
+NAME                                         STARTED        DURATION    STATUS
+nodejs-pipeline-run-4fe564430272f1ea78cad   15 hours ago   2 minutes   Succeeded
+```
 
 ---
 
@@ -162,7 +166,10 @@ tkn p start nodejs-pipeline -n env-ci
 
 ## Create a cloud-native CI/CD pipeline on Kubernetes 1.17+
 
-More info here
+The Tekton Pipelines project provides k8s-style resources for declaring CI/CD-style pipelines.
+
+More information can be found here : https://github.com/tektoncd/pipeline 
+
 
 ## Prerequisites for creating the Tekton CI/CD pipeline
 1. Clone the Git project:
@@ -217,7 +224,7 @@ kubectl apply -f ci-cd-pipeline/tekton-kubernetes/service-account-binding.yaml -
 ---
 ## Create the Tekton CI/CD pipeline
 
-1. Create Tekton resources, task, and the pipeline:
+1. Create the Tekton `Resources`, `Task`, and `Pipeline`:
 
 ```
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/resources.yaml          -n env-ci
@@ -228,18 +235,27 @@ kubectl create -f ci-cd-pipeline/tekton-kubernetes/task-promote.yaml       -n en
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline.yaml           -n env-ci
 ```
 
-2. Create an application secret which will be mounted as an environment variable inside the Node.js pod:
+2. Create an application `Secret` which will be mounted as an environment variable inside the Node.js pod:
 
 ```
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/secrets.yaml -n env-dev
 kubectl apply -f ci-cd-pipeline/tekton-kubernetes/secrets.yaml -n env-stage
 ```
 
-3. Execute the pipeline via PipelineRun:
+3. Execute the pipeline via `PipelineRun` via `kubectl` or via `tkn` command:
 
 ```
 kubectl create -f ci-cd-pipeline/tekton-kubernetes/pipeline-run.yaml -n env-ci
-kubectl get pipelinerun -n env-ci -w
+kubectl get pipelinerun -n env-ci
+NAME                                 SUCCEEDED    REASON      STARTTIME   COMPLETIONTIME
+nodejs-pipeline-run-4fe564430272f1e   True        Succeeded   15h         15h
+```
+```
+tkn p start nodejs-pipeline -n env-ci
+tkn pr ls -n env-ci
+
+NAME                                      STARTED        DURATION    STATUS
+nodejs-pipeline-run-4fe564430272f1ea78   15 hours ago   2 minutes   Succeeded
 ```
 
 4. Check the Node.JS application pods and logs from both environments:
@@ -253,12 +269,13 @@ kubectl logs nodejs-app-76fcdc6759-pjxs7 -f -n env-dev
 
 5. View the Node.JS application UI:
 
-Retrieve the Kubernetes cluster EXTERNAL-IP using following command:
+Retrieve the Kubernetes cluster `EXTERNAL-IP` using following command:
 ```
 kubectl get nodes -o wide
 ```
-Then open following URL in a Browser to view the Node.JS application UI:
-http://<EXTERNAL-IP>>:32426/nodejs
+Then open following URL in a Browser to view the Node.JS application UI :
+- from `DEV` environment:  `http://<EXTERNAL-IP>:32426/nodejs`
+- from `STAGE` environment:  `http://<EXTERNAL-IP>:32526/nodejs`
 
 
 ---
@@ -285,14 +302,14 @@ The mechanism for triggering builds through webhooks is the same and involves cr
 oc create -f ci-cd-pipeline/tekton-triggers/webhook-event-listener-openshift.yaml -n env-ci 
 ```
 
-2. Create a Route for the EventListener service:
+2. Create a `Route` for the `EventListener` service:
 
 ```
 oc expose svc/el-nodejs-pipeline-listener -n env-ci
 oc get route -n env-ci
 ```
 
-3. Add the Route to Git webhook and then preform a push.
+3. Add the `Route` to Git webhook and then preform a push.
 
 Finally, the new `PipelineRun` will be triggered automatically and visible in the pipelines console `ci-env` project.
 
@@ -308,7 +325,7 @@ kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/
 kubectl apply -f ci-cd-pipeline/tekton-triggers/tekton-dashboard.yaml -n tekton-pipelines
 ```
 
-2. Create a new ServiceAccount, Role and, RoleBinding. In Kubernetes, this new ServiceAccount will be used for running the EventListener and starting the PipelineRun via the TriggerTemplate. The actual pipeline will still run as the ServiceAccount defined in it.
+2. Create a new `ServiceAccount`, `Role` and `RoleBinding`. In Kubernetes, this new ServiceAccount will be used for running the `EventListener` and starting the `PipelineRun` via the `TriggerTemplate`. The actual pipeline will still run as the ServiceAccount defined in it.
 
 ```
 kubectl apply  -f ci-cd-pipeline/tekton-triggers/webhook-service-account.yaml  -n env-ci

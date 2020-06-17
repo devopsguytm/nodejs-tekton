@@ -32,7 +32,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: nodejs-app
-        image: us.icr.io/cloud-images/nodejs-app:latest
+        image: us.icr.io/tekton-pipeline/nodejs-app:latest
         imagePullPolicy: "Always"
         ports:
         - containerPort: 8080
