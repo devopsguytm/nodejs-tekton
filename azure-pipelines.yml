@@ -27,3 +27,10 @@ stages:
         dockerfile: '$(Build.SourcesDirectory)/ci-cd-pipeline/tekton-kubernetes/Dockerfile'
         tags: |
           $(tag)
+    - task: SonarQubePrepare@4
+      inputs:
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: 'exo-frontend-'
+        cliProjectName: 'exo-frontend-'
+        cliSources: '.'
