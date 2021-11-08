@@ -25,4 +25,4 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
+            oc get deploy $(inputs.params.APP_NAME) -n $(inputs.params.DEPLOY_PROJECT)
