@@ -43,7 +43,7 @@ spec:
           - |-
             oc tag $(inputs.params.DEPLOY_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest
             oc tag $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):latest $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION)
-            oc get dc $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
+            oc get deploy $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
             if [[ $? -ne 0 ]]
             then
                 oc new-app -i $(inputs.params.PROMOTE_PROJECT)/$(inputs.params.APP_NAME):$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)
@@ -69,18 +69,18 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc label dc/$(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.PROMOTE_PROJECT)
-            oc label dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.PROMOTE_PROJECT)
-            oc set env dc/$(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)            
-            oc set env dc/$(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.PROMOTE_PROJECT)
+            oc label deploy $(inputs.params.APP_NAME) app.kubernetes.io/name=nodejs --overwrite -n $(inputs.params.PROMOTE_PROJECT)
+            oc label deploy $(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) --overwrite -n $(inputs.params.PROMOTE_PROJECT)
+            oc set env deploy $(inputs.params.APP_NAME) app.version=$(inputs.params.APP_VERSION) -n $(inputs.params.PROMOTE_PROJECT)            
+            oc set env deploy $(inputs.params.APP_NAME) --from secret/$(inputs.params.AUTHORS_API_KEY) -n $(inputs.params.PROMOTE_PROJECT)
       - name: set-app-probes
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc set probe dc/$(inputs.params.APP_NAME) --remove --readiness --liveness -n $(inputs.params.PROMOTE_PROJECT)
-            oc set probe dc/$(inputs.params.APP_NAME) --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n $(inputs.params.PROMOTE_PROJECT)
+            oc set probe deploy $(inputs.params.APP_NAME) --remove --readiness --liveness -n $(inputs.params.PROMOTE_PROJECT)
+            oc set probe deploy $(inputs.params.APP_NAME) --readiness --get-url=http://:8080/ --initial-delay-seconds=30 -n $(inputs.params.PROMOTE_PROJECT)
       - name: set-app-autoscale
         image: quay.io/openshift/origin-cli:latest
         workingDir: /workspace/source
@@ -90,7 +90,7 @@ spec:
             oc get hpa $(inputs.params.APP_NAME)  -n $(inputs.params.PROMOTE_PROJECT)
             if [[ $? -ne 0 ]]
             then
-                oc autoscale dc $(inputs.params.APP_NAME) --min 1 --max 2 --cpu-percent=75 -n $(inputs.params.PROMOTE_PROJECT)
+                oc autoscale deploy $(inputs.params.APP_NAME) --min 1 --max 2 --cpu-percent=75 -n $(inputs.params.PROMOTE_PROJECT)
             else
                 echo "Application autoscale is already configured."
             fi
@@ -100,4 +100,4 @@ spec:
         command: ["/bin/bash", "-c"]
         args:
           - |-
-            oc set triggers dc/$(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
+            oc set triggers deploy $(inputs.params.APP_NAME) -n $(inputs.params.PROMOTE_PROJECT)
